@@ -88,7 +88,9 @@ public class TimerView extends View {
     @Override
     protected void onDraw(Canvas canvas){
         canvas.drawColor(Color.GRAY);
+        System.out.println("draw call" + owner);
         if(isActive && owner != null){
+            System.out.println("active and has owner" + owner.getName());
             int width = this.getMeasuredWidth();
             int height = this.getMeasuredHeight();
             float progress = owner.getProgress();
@@ -111,6 +113,10 @@ public class TimerView extends View {
 
             lastTimerName = name;
         }
+    }
+
+    public void requestDraw(){
+        invalidate();
     }
 
     private void adjustText(Rect textBounds, int width, String name, Canvas canvas, int height){

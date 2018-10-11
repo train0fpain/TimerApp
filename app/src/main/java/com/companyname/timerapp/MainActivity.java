@@ -1,6 +1,7 @@
 package com.companyname.timerapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -34,15 +35,20 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
+
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+
+        if (android.os.Build.VERSION.SDK_INT > 21) {
+            this.getWindow().setStatusBarColor(Color.parseColor("#356bba"));
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.addDrawerListener(toggle);
+//        toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -133,13 +139,22 @@ public class MainActivity extends AppCompatActivity
 
     public void createGridLayout(){
 
-        int numOfCol = gridLayout.getColumnCount();
+        final int numOfCol = gridLayout.getColumnCount();
         int numOfRow = gridLayout.getRowCount();
         timerViews = new TimerView[numOfCol*numOfRow];
         for(int yPos=0; yPos<numOfRow; yPos++){
             for(int xPos=0; xPos<numOfCol; xPos++){
                 TimerView tView = new TimerView(this, xPos, yPos);
                 timerViews[yPos*numOfCol + xPos] = tView;
+                final int finalYPos = yPos;
+                final int finalXPos = xPos;
+                tView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TimerManager.addTimer(new Timer(null), true, finalYPos *numOfCol + finalXPos);
+                    }
+                });
+
                 gridLayout.addView(tView);
             }
         }
@@ -153,9 +168,12 @@ public class MainActivity extends AppCompatActivity
         gridLayout.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener(){
 
+                    boolean updateLayout = true;
+
                     @Override
                     public void onGlobalLayout() {
 
+                        if (updateLayout){
                         final int MARGIN = 5;
 
                         int pWidth = gridLayout.getWidth();
@@ -175,8 +193,8 @@ public class MainActivity extends AppCompatActivity
                                 timerViews[yPos*numOfCol + xPos].setLayoutParams(params);
                             }
                         }
-
-                    }});
+                        updateLayout = false;
+                    }}});
     }
 
     public static TimerView getViewAt(int index){

@@ -24,6 +24,7 @@ public class Timer {
     public void update(){
         if (!pause) {
             time.decrement();
+            view.requestDraw();
 
             if (!end && time.getCurrentSeconds() <= 0){
                 end = true;
