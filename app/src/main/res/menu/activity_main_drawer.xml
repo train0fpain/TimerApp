@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_switch"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="Edit mode"
+            app:actionLayout="@layout/action_view_switch" />
+    </group>
+
+    <item android:title="Irreversible functions">
+        <menu>
+            <item
+                android:id="@+id/nav_resetAll"
+                android:icon="@android:drawable/ic_menu_revert"
+                android:title="Reset all timers" />
+            <item
+                android:id="@+id/nav_deleteAll"
+                android:icon="@android:drawable/ic_menu_delete"
+                android:title="Delete all timers" />
+        </menu>
+    </item>
+
+</menu>
