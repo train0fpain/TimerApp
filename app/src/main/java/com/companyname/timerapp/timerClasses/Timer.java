@@ -1,5 +1,6 @@
 package com.companyname.timerapp.timerClasses;
 
+import android.os.Handler;
 import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
@@ -14,6 +15,7 @@ public class Timer {
     private boolean end = false;
     private int index;
     private int endClicks = 0;
+    private int doubleTap = 0;
 
     public Timer(TimerView view) {
         this.time = new TimeFormat(21);
@@ -38,25 +40,39 @@ public class Timer {
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (TimerManager.isEditMode()){
-                    try {
-                        ((MainActivity)view.getContext()).openEditPage(Timer.this);
-                    }catch (NullPointerException e){
-                        throw new NullPointerException("can't open edit page because of missing main activity");
-                    }
-                }else {
-                    if (time.getCurrentSeconds() <= 0) {
-                        endClicks++;
-                        if (endClicks >= 2) {
+            public void onClick(final View view) {
+                doubleTap++;
+                Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (doubleTap == 1){
+                            if (TimerManager.isEditMode()) {
+                                try {
+                                    ((MainActivity) view.getContext()).openEditPage(Timer.this);
+                                } catch (NullPointerException e) {
+                                    throw new NullPointerException("can't open edit page because of missing main activity");
+                                }
+                            } else {
+                                if (time.getCurrentSeconds() <= 0) {
+                                    endClicks++;
+                                    if (endClicks >= 2) {
+                                        reset();
+                                    } else {
+                                        setPause(true);
+                                        TimerManager.stopRingtone();
+                                    }
+                                } else {
+                                    setPause(!pause);
+                                }
+                            }
+                        } else if (doubleTap == 2){
                             reset();
-                        }else {
-                            setPause(true);
+                            TimerManager.stopRingtone();
                         }
-                    } else {
-                        setPause(!pause);
+                        doubleTap = 0;
                     }
-                }
+                }, 300);
             }
         });
 
@@ -71,6 +87,8 @@ public class Timer {
                 return false;
             }
         });
+
+        view.requestDraw();
     }
 
     public void setView(TimerView view) {
@@ -89,9 +107,9 @@ public class Timer {
         time.reset();
         view.reset();
         pause = true;
-        TimerManager.stopRingtone();
         end = false;
         endClicks = 0;
+        view.requestDraw();
     }
 
     public String getName() {

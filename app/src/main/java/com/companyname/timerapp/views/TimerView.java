@@ -10,7 +10,9 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.timerClasses.Timer;
+import com.companyname.timerapp.timerClasses.TimerManager;
 import com.companyname.timerapp.util.Start;
 
 public class TimerView extends View {
@@ -32,6 +34,7 @@ public class TimerView extends View {
     private int textSize = 30;
     private int textNameWidth=0;
     private String lastTimerName = "";
+
 
 
     public TimerView(Context context, int idX, int idY) {
@@ -168,6 +171,17 @@ public class TimerView extends View {
 
     public void setActive(boolean active){
         isActive = active;
+        if (!isActive){
+            this.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TimerManager.addTimer(new Timer(null), true, idY * MainActivity.gridLayout.getColumnCount() + idX);
+                }
+            });
+            this.setOnLongClickListener(null);
+
+
+        }
     }
 
     public boolean isActive() {
