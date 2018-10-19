@@ -6,6 +6,7 @@ import android.os.Handler;
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
 import com.companyname.timerapp.util.Start;
+import com.companyname.timerapp.views.TimerView;
 
 public class TimerManager {
 
@@ -58,6 +59,13 @@ public class TimerManager {
         }
     }
 
+    public static void resetRingtone(){
+        alarmCount = 0;
+        if (mP != null && mP.isPlaying()) {
+            mP.pause();
+        }
+    }
+
     public static Timer[] getTimers() {
         return timers;
     }
@@ -103,6 +111,9 @@ public class TimerManager {
     }
 
     public static void deleteTimer(int id){
+        if (timers[id].isPlayingAlarm()){
+            stopRingtone();
+        }
         timers[id].deactivateView();
         timers[id] = null;
         Start.getDbHelper().deleteData(id);
@@ -119,6 +130,7 @@ public class TimerManager {
     }
 
     public static void resetAllTimers(){
+        resetRingtone();
         for (Timer timer : timers){
             if (timer != null) {
                 timer.reset();
@@ -133,5 +145,46 @@ public class TimerManager {
             }
         }
         return -1;
+    }
+
+    public static void dropIntoSlot(TimerView dropped, TimerView freeSlot){
+        Timer owner = dropped.getOwner();
+
+        Start.getDbHelper().deleteData(owner.getIndex());
+
+        timers[owner.getIndex()] = null;
+        timers[freeSlot.getIndex()] = owner;
+
+        owner.setIndex(freeSlot.getIndex());
+
+        dropped.getOwner().setView(freeSlot);
+        dropped.setOwner(null);
+        dropped.setActive(false);
+        dropped.requestDraw();
+
+        Start.getDbHelper().addData(owner.getIndex(), owner.getName(), owner.getTimeSeconds());
+    }
+
+    public static void swappSlot(TimerView dropped, TimerView target){
+        Timer droppedOwner = dropped.getOwner();
+        Timer targetOwner = target.getOwner();
+
+        int droppedIndex = droppedOwner.getIndex();
+        int targetIndex = targetOwner.getIndex();
+
+        Start.getDbHelper().deleteData(droppedIndex);
+        Start.getDbHelper().deleteData(targetIndex);
+
+        timers[droppedIndex] = targetOwner;
+        timers[targetIndex] = droppedOwner;
+
+        droppedOwner.setIndex(targetIndex);
+        targetOwner.setIndex(droppedIndex);
+
+        droppedOwner.setView(target);
+        targetOwner.setView(dropped);
+
+        Start.getDbHelper().addData(droppedOwner.getIndex(), droppedOwner.getName(), droppedOwner.getTimeSeconds());
+        Start.getDbHelper().addData(targetOwner.getIndex(), targetOwner.getName(), targetOwner.getTimeSeconds());
     }
 }

@@ -15,6 +15,10 @@
     <item android:title="Irreversible functions">
         <menu>
             <item
+                android:id="@+id/nav_resetAlarm"
+                android:icon="@android:drawable/ic_menu_revert"
+                android:title="Reset alarm tone" />
+            <item
                 android:id="@+id/nav_resetAll"
                 android:icon="@android:drawable/ic_menu_revert"
                 android:title="Reset all timers" />
