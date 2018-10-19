@@ -2,7 +2,7 @@ package com.companyname.timerapp.timerClasses;
 
 public class TimeFormat {
     private int totalSeconds;
-    private int currentSeconds;
+    private float currentSeconds;
 
     public TimeFormat(int totalSeconds) {
         setTotalSeconds(totalSeconds);
@@ -14,7 +14,7 @@ public class TimeFormat {
     }
 
     // getters
-    public int getCurrentSeconds() {
+    public float getCurrentSeconds() {
         return currentSeconds;
     }
 
@@ -23,7 +23,7 @@ public class TimeFormat {
     }
 
     public float getProgress(){
-        return 1-(float)currentSeconds / (float)totalSeconds;
+        return 1-currentSeconds / (float)totalSeconds;
     }
 
     public int getHour(){
@@ -47,7 +47,7 @@ public class TimeFormat {
     }
 
     public void decrement(){
-        currentSeconds -= 1;
+        currentSeconds -= 0.1f;
     }
 
     public void reset(){
@@ -64,9 +64,9 @@ public class TimeFormat {
 
     @Override
     public String toString(){
-        int hour = currentSeconds / 3600;
-        int minute = (currentSeconds%3600) / 60;
-        int second = (currentSeconds%3600) % 60;
+        int hour = (int)currentSeconds / 3600;
+        int minute = (int)(currentSeconds%3600) / 60;
+        int second = (int)(currentSeconds%3600) % 60;
 
         if (currentSeconds < 0){
             return "-"+leadingZeros(Math.abs(hour))

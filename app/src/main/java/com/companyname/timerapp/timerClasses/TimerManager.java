@@ -33,7 +33,7 @@ public class TimerManager {
             @Override
             public void run() {
                 TimerManager.update();
-                h.postDelayed(this, 1000);
+                h.postDelayed(this, 100);
             }
         };
         // start timer

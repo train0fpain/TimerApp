@@ -109,7 +109,7 @@ public class Timer {
     }
     public void setTime(TimeFormat time) {
         this.time = time;
-        Start.getDbHelper().updateTime(index, time.getTotalSeconds());
+        Start.getDbHelper().updateTime(index, (int)time.getTotalSeconds());
     }
 
     public float getProgress(){
