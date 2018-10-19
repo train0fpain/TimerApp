@@ -1,6 +1,8 @@
 package com.companyname.timerapp.timerClasses;
 
+import android.content.ClipData;
 import android.os.Handler;
+import android.view.DragEvent;
 import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
@@ -67,8 +69,14 @@ public class Timer {
                                 }
                             }
                         } else if (doubleTap == 2){
-                            reset();
-                            TimerManager.stopRingtone();
+                            if (TimerManager.isEditMode()){
+                                if (end){
+                                    TimerManager.stopRingtone();
+                                }
+                                TimerManager.deleteTimer(index);
+                            }else {
+                                reset();
+                            }
                         }
                         doubleTap = 0;
                     }
@@ -79,12 +87,23 @@ public class Timer {
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                try {
-                    ((MainActivity)view.getContext()).openEditPage(Timer.this);
-                }catch (NullPointerException e){
-                    throw new NullPointerException("can't open edit page because of missing main activity");
+                if (TimerManager.isEditMode()){
+                    ClipData clipData = ClipData.newPlainText("","");
+                    View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(view);
+                    if (android.os.Build.VERSION.SDK_INT > 23) {
+                        view.startDragAndDrop(clipData, dragShadowBuilder, view, 0);
+                    }else {
+                        view.startDrag(clipData, dragShadowBuilder,view, 0);
+                    }
+                    return true;
+                } else {
+                    try {
+                        ((MainActivity) view.getContext()).openEditPage(Timer.this);
+                    } catch (NullPointerException e) {
+                        throw new NullPointerException("can't open edit page because of missing main activity");
+                    }
+                    return false;
                 }
-                return false;
             }
         });
 
@@ -103,7 +122,14 @@ public class Timer {
         this.pause = pause;
     }
 
+    public boolean isPlayingAlarm(){
+        return end && endClicks == 0;
+    }
+
     public void reset(){
+        if (isPlayingAlarm()){
+            TimerManager.stopRingtone();
+        }
         time.reset();
         view.reset();
         pause = true;
@@ -145,6 +171,8 @@ public class Timer {
 
     public void deactivateView(){
         view.setActive(false);
+        view.setOwner(null);
+        view.requestDraw();
     }
 
     public int getHour(){

@@ -5,4 +5,12 @@
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorCustom</item>
+        <item name="colorPrimaryDark">@color/colorCustom</item>
+        <item name="colorAccent">@color/colorCustomEdit</item>
+        <item name="android:statusBarColor">@color/colorCustom</item>
+    </style>
 </resources>

@@ -13,6 +13,18 @@
                       <PersistentState>
                         <option name="children">
                           <map>
+                            <entry key="actionbar">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\Manuel\Downloads\2000px-Flag_of_Switzerland.svg.png" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
                             <entry key="launcher">
                               <value>
                                 <PersistentState>
@@ -35,7 +47,7 @@
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundLayerName" value="ic_launcher_background" />
-                                      <entry key="foregroundImage" value="C:\Users\Manuel\Downloads\LOGO ALE GOLDENER KOCH 2019 RUND klein.png" />
+                                      <entry key="foregroundImage" value="C:\Users\Manuel\Downloads\2000px-Flag_of_Switzerland.svg.png" />
                                       <entry key="foregroundLayerName" value="ic_launcher_foreground" />
                                       <entry key="outputName" value="ale_icon" />
                                     </map>
@@ -43,6 +55,24 @@
                                 </PersistentState>
                               </value>
                             </entry>
+                            <entry key="launcherLegacy">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\Manuel\Downloads\2000px-Flag_of_Switzerland.svg.png" />
+                                      <entry key="outputName" value="ic_swiss_flag" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                        <option name="values">
+                          <map>
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>
@@ -51,6 +81,11 @@
                 </map>
               </option>
             </PersistentState>
+          </value>
+        </entry>
+        <entry key="vectorWizard">
+          <value>
+            <PersistentState />
           </value>
         </entry>
       </map>
