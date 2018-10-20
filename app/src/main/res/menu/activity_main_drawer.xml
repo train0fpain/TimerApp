@@ -8,7 +8,7 @@
         <item
             android:id="@+id/nav_switch"
             android:icon="@android:drawable/ic_menu_edit"
-            android:title="Edit mode"
+            android:title="@string/edit_mode"
             app:actionLayout="@layout/action_view_switch" />
     </group>
 
@@ -17,15 +17,15 @@
             <item
                 android:id="@+id/nav_resetAlarm"
                 android:icon="@android:drawable/ic_menu_revert"
-                android:title="Reset alarm tone" />
+                android:title="@string/resetTone" />
             <item
                 android:id="@+id/nav_resetAll"
                 android:icon="@android:drawable/ic_menu_revert"
-                android:title="Reset all timers" />
+                android:title="@string/resetTimers" />
             <item
                 android:id="@+id/nav_deleteAll"
                 android:icon="@android:drawable/ic_menu_delete"
-                android:title="Delete all timers" />
+                android:title="@string/deleteTimers" />
         </menu>
     </item>
 

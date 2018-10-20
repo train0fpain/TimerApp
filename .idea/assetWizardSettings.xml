@@ -35,7 +35,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="98" />
+                                                <entry key="scalingPercent" value="60" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -45,11 +45,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundLayerName" value="ic_launcher_background" />
+                                      <entry key="backgroundLayerName" value="ic_swiss_background" />
                                       <entry key="foregroundImage" value="C:\Users\Manuel\Downloads\2000px-Flag_of_Switzerland.svg.png" />
-                                      <entry key="foregroundLayerName" value="ic_launcher_foreground" />
-                                      <entry key="outputName" value="ale_icon" />
+                                      <entry key="foregroundLayerName" value="ic_swiss_layer" />
+                                      <entry key="outputName" value="swiss_icon" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -61,6 +60,7 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
+                                      <entry key="backgroundColor" value="475469" />
                                       <entry key="imageAsset" value="C:\Users\Manuel\Downloads\2000px-Flag_of_Switzerland.svg.png" />
                                       <entry key="outputName" value="ic_swiss_flag" />
                                     </map>

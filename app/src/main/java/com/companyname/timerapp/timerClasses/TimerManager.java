@@ -95,6 +95,7 @@ public class TimerManager {
             if (addData) {
                 addData(slot, newTimer.getName(), newTimer.getTimeSeconds());
             }
+
         }
     }
 

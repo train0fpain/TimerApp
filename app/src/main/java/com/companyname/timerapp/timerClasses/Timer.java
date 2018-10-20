@@ -20,7 +20,7 @@ public class Timer {
     private int doubleTap = 0;
 
     public Timer(TimerView view) {
-        this.time = new TimeFormat(21);
+        this.time = new TimeFormat(3);
         setView(view);
 
     }

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#475469</color>
+    <color name="colorPrimaryDark">#475469</color>
+    <color name="colorAccent">#079877</color>
     <color name="colorCustom">#475469</color>
     <color name="colorCustomEdit">#079877</color>
+    <color name="timerBackground">#e6e6e6</color>
+    <color name="timerProgress">#87c854</color>
+    <color name="timerFinished">#ff1806</color>
+    <color name="timerWriting">#7f7679</color>
 </resources>

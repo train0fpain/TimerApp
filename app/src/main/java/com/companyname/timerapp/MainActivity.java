@@ -29,6 +29,7 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     private static TimerView[] timerViews;
 
     TextView title;
+    ImageView editIcon;
     AlertDialog dialog;
     EditText editText;
 
@@ -57,14 +59,15 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPref = this.getPreferences(this.MODE_PRIVATE);
         final SharedPreferences.Editor prefEditor = sharedPref.edit();
 
+        editIcon = findViewById(R.id.icon_edit);
         title = findViewById(R.id.title);
-        title.setText(sharedPref.getString("titleKey", "Default title"));
+        title.setText(sharedPref.getString("titleKey", "Der Goldene Koch 2019 Halbfinal"));
         dialog = new AlertDialog.Builder(this).create();
         editText = new EditText(this);
 
-        dialog.setTitle("Edit the title");
+        dialog.setTitle(R.string.editTitle);
         dialog.setView(editText);
-        dialog.setButton(DialogInterface.BUTTON_POSITIVE, "SAVE TITLE", new DialogInterface.OnClickListener() {
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.saveTitle), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 title.setText(editText.getText());
@@ -85,11 +88,6 @@ public class MainActivity extends AppCompatActivity
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
-
-        if (android.os.Build.VERSION.SDK_INT > 21) {
-            // old color #356bba
-            this.getWindow().setStatusBarColor(Color.parseColor("#475469"));
-        }
 
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -118,12 +116,13 @@ public class MainActivity extends AppCompatActivity
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     TimerManager.setEditMode(b);
                     if (b){
-                        // old color #dbb874
-                        gridLayout.setBackgroundColor(Color.parseColor("#079877"));
-                        mainLayout.setBackgroundColor(Color.parseColor("#079877"));
+                        gridLayout.setBackgroundColor(getResources().getColor(R.color.colorCustomEdit));
+                        mainLayout.setBackgroundColor(getResources().getColor(R.color.colorCustomEdit));
+                        editIcon.setVisibility(View.VISIBLE);
                     }else{
-                        gridLayout.setBackgroundColor(Color.parseColor("#475469"));
-                        mainLayout.setBackgroundColor(Color.parseColor("#475469"));
+                        gridLayout.setBackgroundColor(getResources().getColor(R.color.colorCustom));
+                        mainLayout.setBackgroundColor(getResources().getColor(R.color.colorCustom));
+                        editIcon.setVisibility(View.INVISIBLE);
                     }
                 }
             });
@@ -152,20 +151,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.new_timerButton) {
-//            TimerManager.addTimer(new Timer(null));
-//        }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
