@@ -20,7 +20,7 @@ public class Timer {
     private int doubleTap = 0;
 
     public Timer(TimerView view) {
-        this.time = new TimeFormat(21);
+        this.time = new TimeFormat(3);
         setView(view);
 
     }
@@ -154,7 +154,7 @@ public class Timer {
     }
     public void setTime(TimeFormat time) {
         this.time = time;
-        Start.getDbHelper().updateTime(index, time.getTotalSeconds());
+        Start.getDbHelper().updateTime(index, (int)time.getTotalSeconds());
     }
 
     public float getProgress(){

@@ -23,7 +23,7 @@
         </activity>
         <activity
             android:name=".EditActivity"
-            android:label="Edit"
+            android:label="@string/edit"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme"/>

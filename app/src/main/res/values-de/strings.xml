@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TimerApp</string>
+    <string name="edit_mode">Bearbeitungs modus</string>
+    <string name="resetTone">Alarmtöne zurücksetzen</string>
+    <string name="resetTimers">Alle Timer zurücksetzen</string>
+    <string name="deleteTimers">Alle Timer löschen</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="deleteButton">LÖSCHEN</string>
+    <string name="saveButton">SPEICHERN</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="editTitle">Titel Bearbeiten</string>
+    <string name="saveTitle">TITEL SPEICHERN</string>
+</resources>
