@@ -13,6 +13,7 @@ import android.view.DragEvent;
 import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
+import com.companyname.timerapp.R;
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
 import com.companyname.timerapp.util.Start;
@@ -21,17 +22,10 @@ public class TimerView extends View {
 
     private Timer owner;
 
-    private final int backgroundColor = Color.parseColor("#e6e6e6"),
-            progressColor = Color.parseColor("#87c854"),
-            finishedColor = Color.parseColor("#ff1806"),
-            writingColor = Color.parseColor("#8c9192");
-    // 475469
-    // 293133
-    // ffffff
-    // 333d40
-    // 7f7679
-    // b1b4b5
-    // 8c9192
+    private final int backgroundColor = getResources().getColor(R.color.timerBackground),
+            progressColor = getResources().getColor(R.color.timerProgress),
+            finishedColor = getResources().getColor(R.color.timerFinished),
+            writingColor = getResources().getColor(R.color.timerWriting);
 
     private final Typeface font = Typeface.createFromAsset(Start.getContext().getAssets(), "fonts/Lato-Regular.ttf");
 
@@ -42,10 +36,8 @@ public class TimerView extends View {
     private int height = 0;
     private int width = 0;
     private boolean isActive = false;
-    private int textSizeTime = 30;
-    private int textSize = 30;
-    private int textNameWidth=0;
-    private String lastTimerName = "";
+    private int textSizeTime = 26;
+    private int textSize = 26;
 
     RectF progressRect = new RectF();
     Rect textBounds = new Rect();
@@ -145,15 +137,19 @@ public class TimerView extends View {
                 progressPaint.setColor(finishedColor);
             }
 
-            progressRect.set(new RectF(0, (int) (height * clamp(1 - progress, 0, 1)), width, height));
-            canvas.drawRoundRect(progressRect,10,10, progressPaint);
+            if (progress < 0.35f){
+                progressRect.set(new RectF((0.35f-progress)*80, (int) (height * clamp(1 - progress, 0, 1)), width-(0.35f-progress)*80, height));
+            }else {
+                progressRect.set(new RectF(0, (int) (height * clamp(1 - progress, 0, 1)), width, height));
+            }
+            canvas.drawRoundRect(progressRect,30,30, progressPaint);
 
             textPaintName.getTextBounds(name, 0,nameLength, textBounds);
 
             adjustText(textBounds, width, name, canvas, height);
             canvas.drawText(owner.getTimeString(), width / 2, 3* height / 4 + textBounds.height()/2, textPaintTime);
 
-            lastTimerName = name;
+//            lastTimerName = name;
         }
     }
 
@@ -164,7 +160,7 @@ public class TimerView extends View {
     private void adjustText(Rect textBounds, int width, String name, Canvas canvas, int height){
         // break text if exeeds certain length
         final int charsPerLine = 19;
-        textSize = textSizeTime * 2 / 3;
+        textSize = (textSizeTime+(int)(textSizeTime*0.2f)) * 2 / 3;
         textPaintName.setTextSize(textSize);
         if (name.length() > charsPerLine) {
 //            textSize = textSizeTime * 2 / 3;
@@ -193,8 +189,8 @@ public class TimerView extends View {
     }
 
     private void refreshBasicTextSize(int width){
-        if (textSizeTime < width * 3 / 20){
-            textSizeTime = width * 3 / 20;
+        if (textSizeTime < (width * 3 / 20)*0.9f){
+            textSizeTime = (int)((width * 3 / 20)*0.9f);
             textPaintTime.setTextSize(textSizeTime);
             textSize = textSizeTime;
             textPaintName.setTextSize(textSizeTime);
