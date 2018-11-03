@@ -16,6 +16,7 @@ import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
+import com.companyname.timerapp.util.LinkIndicator;
 import com.companyname.timerapp.util.LinkManager;
 import com.companyname.timerapp.util.Start;
 import com.companyname.timerapp.util.UserMode;
@@ -24,6 +25,8 @@ public class TimerView extends View {
 
     private Timer owner;
     private LinkManager linkManager = LinkManager.getInstance();
+
+    private LinkIndicator linkIndicator;
 
     private final int backgroundColor = getResources().getColor(R.color.timerBackground),
             progressColor = getResources().getColor(R.color.timerProgress),
@@ -70,7 +73,9 @@ public class TimerView extends View {
         init();
     }
 
-    private void init(){// prepare paint
+    private void init(){
+        linkIndicator = new LinkIndicator(textSizeTime*3/4);
+        // prepare paint
         backGroundPaint = new Paint();
         backGroundPaint.setStyle(Paint.Style.FILL);
         backGroundPaint.setAntiAlias(true);
@@ -153,6 +158,11 @@ public class TimerView extends View {
             adjustText(textBounds, width, name, canvas, height);
             canvas.drawText(owner.getTimeString(), width / 2, 3* height / 4 + textBounds.height()/2, textPaintTime);
         }
+
+        if (linkIndicator.shouldDraw()){
+            canvas.drawCircle((width / 10), (height / 10) * 8, linkIndicator.getRadius(), linkIndicator.getPaint());
+            canvas.drawText(Integer.toString(linkIndicator.getLink()), (width / 10), (height / 10) * 8 + textBounds.height()/2, textPaintTime);
+        }
     }
 
     public void requestDraw(){
@@ -221,5 +231,9 @@ public class TimerView extends View {
 
     public int getIndex(){
         return idY * MainActivity.gridLayout.getColumnCount() + idX;
+    }
+
+    public LinkIndicator getLinkIndicator() {
+        return linkIndicator;
     }
 }
