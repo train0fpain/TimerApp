@@ -5,13 +5,18 @@ import android.os.Handler;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
+import com.companyname.timerapp.util.LinkLine;
 import com.companyname.timerapp.util.Start;
+import com.companyname.timerapp.util.UserMode;
 import com.companyname.timerapp.views.TimerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TimerManager {
 
     private static Timer[] timers = new Timer[20];
-    private static boolean editMode =false;
+    private static UserMode userMode = UserMode.NORMAL;
     private static MediaPlayer mP;
     private static int alarmCount = 0;
 
@@ -78,37 +83,38 @@ public class TimerManager {
         }
     }
 
-    public static void addTimer(Timer newTimer){
-        addTimer(newTimer, true);
+    public static Timer addTimer(Timer newTimer){
+        return addTimer(newTimer, true);
     }
 
-    public static void addTimer(Timer newTimer, boolean addData){
+    public static Timer addTimer(Timer newTimer, boolean addData){
         int slot = findFreeSlot();
-        addTimer(newTimer, addData, slot);
+        return addTimer(newTimer, addData, slot);
     }
 
-    public static void addTimer(Timer newTimer, boolean addData, int slot){
-        if (slot >= 0) {
+    public static Timer addTimer(Timer newTimer, boolean addData, int slot){
+        if (userMode != UserMode.LINK && slot >= 0) {
             timers[slot] = newTimer;
             newTimer.setIndex(slot);
             newTimer.setView(MainActivity.getViewAt(slot));
             if (addData) {
                 addData(slot, newTimer.getName(), newTimer.getTimeSeconds());
             }
-
+            return timers[slot];
         }
+        return null;
     }
 
     private static void addData(int id, String name, int time){
         Start.getDbHelper().addData(id, name, time);
     }
 
-    public static boolean isEditMode() {
-        return editMode;
+    public static UserMode getUserMode() {
+        return userMode;
     }
 
-    public static void setEditMode(boolean editMode) {
-        TimerManager.editMode = editMode;
+    public static void setUserMode(UserMode userMode) {
+        TimerManager.userMode = userMode;
     }
 
     public static void deleteTimer(int id){
@@ -188,4 +194,5 @@ public class TimerManager {
         Start.getDbHelper().addData(droppedOwner.getIndex(), droppedOwner.getName(), droppedOwner.getTimeSeconds());
         Start.getDbHelper().addData(targetOwner.getIndex(), targetOwner.getName(), targetOwner.getTimeSeconds());
     }
+
 }

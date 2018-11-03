@@ -1,28 +1,20 @@
 package com.companyname.timerapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.SwitchCompat;
-import android.view.ContextThemeWrapper;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.SwitchCompat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
@@ -35,6 +27,9 @@ import android.widget.TextView;
 
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
+import com.companyname.timerapp.util.LinkLine;
+import com.companyname.timerapp.util.LinkManager;
+import com.companyname.timerapp.util.UserMode;
 import com.companyname.timerapp.views.TimerView;
 
 public class MainActivity extends AppCompatActivity
@@ -43,11 +38,14 @@ public class MainActivity extends AppCompatActivity
     private ConstraintLayout mainLayout;
     public static GridLayout gridLayout;
     private static TimerView[] timerViews;
+    private LinkManager linkManager = LinkManager.getInstance();
 
     TextView title;
     ImageView editIcon;
     AlertDialog dialog;
     EditText editText;
+
+    public static final int MARGIN = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +77,7 @@ public class MainActivity extends AppCompatActivity
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TimerManager.isEditMode()) {
+                if (TimerManager.getUserMode() == UserMode.EDIT) {
                     editText.setText(title.getText());
                     dialog.show();
                 }
@@ -89,7 +87,27 @@ public class MainActivity extends AppCompatActivity
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+                linkManager.getLinkLine().stopDrawLine();
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
 //                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 //        toggle.setDrawerIndicatorEnabled(false); //disable "hamburger to arrow" drawable
@@ -103,34 +121,52 @@ public class MainActivity extends AppCompatActivity
         gridLayout = findViewById(R.id.androidGrid);
         createGridLayout();
         mainLayout = findViewById(R.id.constraintLayout);
+
+//        TimerManager.setLinkLine((LinkLine) findViewById(R.id.linkLine));
+        linkManager.setLinkLine((LinkLine) findViewById(R.id.linkLine));
+
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        try{
-            NavigationView navigationView = findViewById(R.id.nav_view);
-            SwitchCompat switchCompat = ((SwitchCompat)((LinearLayout)navigationView.getMenu().findItem(R.id.nav_switch).getActionView()).getChildAt(0));
-            switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    TimerManager.setEditMode(b);
-                    if (b){
-                        gridLayout.setBackgroundColor(getResources().getColor(R.color.colorCustomEdit));
-                        mainLayout.setBackgroundColor(getResources().getColor(R.color.colorCustomEdit));
-                        editIcon.setVisibility(View.VISIBLE);
-                    }else{
-                        gridLayout.setBackgroundColor(getResources().getColor(R.color.colorCustom));
-                        mainLayout.setBackgroundColor(getResources().getColor(R.color.colorCustom));
-                        editIcon.setVisibility(View.INVISIBLE);
-                    }
-                }
-            });
+        // get switch for modes
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        final SwitchCompat editModeSwitch = ((SwitchCompat)((LinearLayout)navigationView.getMenu().findItem(R.id.nav_switch).getActionView()).getChildAt(0));
+        final SwitchCompat linkModeSwitch = ((SwitchCompat)((LinearLayout)navigationView.getMenu().findItem(R.id.nav_link_switch).getActionView()).getChildAt(0));
 
-            switchCompat.setChecked(TimerManager.isEditMode());
+        // create edit switch
+        editModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                switchMode(b, UserMode.EDIT, View.VISIBLE, linkModeSwitch);
+            }
+        });
 
-        }catch (Exception e){
-            System.out.println(e+"shit switch");
+        // create link switch
+        linkModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                switchMode(b, UserMode.LINK, View.INVISIBLE, editModeSwitch);
+            }
+        });
+
+        editModeSwitch.setChecked(TimerManager.getUserMode() == UserMode.EDIT);
+        linkModeSwitch.setChecked(TimerManager.getUserMode() == UserMode.LINK);
+    }
+
+    private void switchMode(boolean switchState, UserMode mode, int iconVisible, SwitchCompat other){
+        if (switchState){
+            other.setChecked(false);
+            TimerManager.setUserMode(mode);
+            gridLayout.setBackgroundColor(getResources().getColor(R.color.colorCustomEdit));
+            mainLayout.setBackgroundColor(getResources().getColor(R.color.colorCustomEdit));
+            editIcon.setVisibility(iconVisible);
+        }else{
+            TimerManager.setUserMode(UserMode.NORMAL);
+            gridLayout.setBackgroundColor(getResources().getColor(R.color.colorCustom));
+            mainLayout.setBackgroundColor(getResources().getColor(R.color.colorCustom));
+            editIcon.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -186,7 +222,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void openEditPage(int index){
-        //TimerManager.setEditMode(true);
         Intent intent = new Intent(this, EditActivity.class);
         intent.putExtra("index", index);
         this.startActivity(intent);
@@ -206,8 +241,10 @@ public class MainActivity extends AppCompatActivity
                 tView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        TimerManager.addTimer(new Timer(null), true, finalYPos *numOfCol + finalXPos);
-                        openEditPage(TimerManager.getTimer(finalYPos *numOfCol + finalXPos));
+                        Timer timer = TimerManager.addTimer(new Timer(null), true, finalYPos *numOfCol + finalXPos);
+                        if (timer != null) {
+                            openEditPage(timer);
+                        }
                     }
                 });
 
@@ -231,7 +268,6 @@ public class MainActivity extends AppCompatActivity
                     public void onGlobalLayout() {
 
                         if (updateLayout){
-                        final int MARGIN = 5;
 
                         int pWidth = gridLayout.getWidth();
                         int pHeight = gridLayout.getHeight();

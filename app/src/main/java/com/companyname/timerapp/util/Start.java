@@ -21,7 +21,6 @@ public class Start extends Application {
         context = getApplicationContext();
         dbHelper = new DatabaseHelper(this);
         getData();
-        //dbHelper.dropAllData();
         TimerManager.init();
     }
 
@@ -33,7 +32,6 @@ public class Start extends Application {
         ArrayList<Integer> listDataTimes = new ArrayList<>();
         ArrayList<Integer> listDataIds = new ArrayList<>();
         while (data.moveToNext()){
-            System.out.println("update");
             listDataNames.add(data.getString(1));
             listDataTimes.add(data.getInt(2));
             listDataIds.add(data.getInt(0));
@@ -45,8 +43,6 @@ public class Start extends Application {
             tmp.setName(listDataNames.get(i));
             tmp.setTime(new TimeFormat(listDataTimes.get(i)));
             tmp.setIndex(listDataIds.get(i));
-            System.out.println("found name: "+listDataNames.get(i));
-            System.out.println("found time: "+listDataTimes.get(i));
         }
     }
 

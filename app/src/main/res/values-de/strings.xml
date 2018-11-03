@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TimerApp</string>
-    <string name="edit_mode">Bearbeitungs modus</string>
+    <string name="edit_mode">Bearbeitungs Modus</string>
     <string name="resetTone">Alarmtöne zurücksetzen</string>
     <string name="resetTimers">Alle Timer zurücksetzen</string>
     <string name="deleteTimers">Alle Timer löschen</string>
@@ -11,4 +11,5 @@
     <string name="edit">Bearbeiten</string>
     <string name="editTitle">Titel Bearbeiten</string>
     <string name="saveTitle">TITEL SPEICHERN</string>
+    <string name="link_mode">Verbindungs Modus</string>
 </resources>

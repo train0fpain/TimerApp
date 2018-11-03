@@ -6,6 +6,7 @@ import android.view.DragEvent;
 import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
+import com.companyname.timerapp.util.LinkManager;
 import com.companyname.timerapp.util.Start;
 import com.companyname.timerapp.views.TimerView;
 
@@ -18,6 +19,7 @@ public class Timer {
     private int index;
     private int endClicks = 0;
     private int doubleTap = 0;
+    private int linkId = -1;
 
     public Timer(TimerView view) {
         this.time = new TimeFormat(3);
@@ -43,71 +45,100 @@ public class Timer {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                doubleTap++;
-                Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (doubleTap == 1){
-                            if (TimerManager.isEditMode()) {
-                                try {
-                                    ((MainActivity) view.getContext()).openEditPage(Timer.this);
-                                } catch (NullPointerException e) {
-                                    throw new NullPointerException("can't open edit page because of missing main activity");
-                                }
-                            } else {
-                                if (time.getCurrentSeconds() <= 0) {
-                                    endClicks++;
-                                    if (endClicks >= 2) {
-                                        reset();
-                                    } else {
-                                        setPause(true);
-                                        TimerManager.stopRingtone();
-                                    }
-                                } else {
-                                    setPause(!pause);
-                                }
-                            }
-                        } else if (doubleTap == 2){
-                            if (TimerManager.isEditMode()){
-                                if (end){
-                                    TimerManager.stopRingtone();
-                                }
-                                TimerManager.deleteTimer(index);
-                            }else {
-                                reset();
-                            }
-                        }
-                        doubleTap = 0;
+            doubleTap++;
+            Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    switch (TimerManager.getUserMode()){
+                        case EDIT:
+                            editClick(view, doubleTap);
+                            break;
+                        case LINK:
+
+                            break;
+                        case NORMAL:
+                            normalClick(view, doubleTap);
+                            break;
                     }
-                }, 300);
+                    doubleTap = 0;
+                }
+            }, 300);
             }
         });
 
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (TimerManager.isEditMode()){
-                    ClipData clipData = ClipData.newPlainText("","");
-                    View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(view);
-                    if (android.os.Build.VERSION.SDK_INT > 23) {
-                        view.startDragAndDrop(clipData, dragShadowBuilder, view, 0);
-                    }else {
-                        view.startDrag(clipData, dragShadowBuilder,view, 0);
-                    }
-                    return true;
-                } else {
-                    try {
-                        ((MainActivity) view.getContext()).openEditPage(Timer.this);
-                    } catch (NullPointerException e) {
-                        throw new NullPointerException("can't open edit page because of missing main activity");
-                    }
-                    return false;
+                switch (TimerManager.getUserMode()){
+                    case EDIT:
+                        ClipData clipData = ClipData.newPlainText("","");
+                        View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(view);
+                        if (android.os.Build.VERSION.SDK_INT > 23) {
+                            view.startDragAndDrop(clipData, dragShadowBuilder, view, 0);
+                        }else {
+                            view.startDrag(clipData, dragShadowBuilder,view, 0);
+                        }
+                        return true;
+                    case NORMAL:
+                        try {
+                            ((MainActivity) view.getContext()).openEditPage(Timer.this);
+                        } catch (NullPointerException e) {
+                            throw new NullPointerException("can't open edit page because of missing main activity");
+                        }
+                        return false;
+                    default:
+                        return false;
                 }
             }
         });
 
         view.requestDraw();
+    }
+
+    private void editClick(final View view, int doubleTap){
+        switch (doubleTap){
+            case 1:
+                try {
+                    ((MainActivity) view.getContext()).openEditPage(Timer.this);
+                } catch (NullPointerException e) {
+                    throw new NullPointerException("can't open edit page because of missing main activity");
+                }
+                break;
+            case 2:
+                if (end){
+                    TimerManager.stopRingtone();
+                }
+                TimerManager.deleteTimer(index);
+                break;
+        }
+    }
+
+    private void normalClick(final View view, int doubleTap){
+        switch (doubleTap){
+            case 1:
+                System.out.println("link id: "+linkId);
+                if (time.getCurrentSeconds() <= 0) {
+                    endClicks++;
+                    if (endClicks >= 2) {
+                        reset();
+                    } else {
+                        setPause(true);
+                        TimerManager.stopRingtone();
+                    }
+                } else {
+                    if (time.getCurrentSeconds() == time.getTotalSeconds() && linkId >= 0){
+                        System.out.println("start linked");
+                        LinkManager.getInstance().startLinkedTimer(linkId);
+                    }else {
+                        setPause(!pause);
+                    }
+                }
+                break;
+            case 2:
+                reset();
+                break;
+        }
     }
 
     public void setView(TimerView view) {
@@ -185,5 +216,13 @@ public class Timer {
 
     public int getSecond(){
         return time.getSecond();
+    }
+
+    public int getLinkId() {
+        return linkId;
+    }
+
+    public void setLinkId(int linkId) {
+        this.linkId = linkId;
     }
 }
