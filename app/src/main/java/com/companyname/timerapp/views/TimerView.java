@@ -2,7 +2,6 @@ package com.companyname.timerapp.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -10,17 +9,24 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
+import com.companyname.timerapp.util.LinkIndicator;
+import com.companyname.timerapp.util.LinkManager;
 import com.companyname.timerapp.util.Start;
+import com.companyname.timerapp.util.UserMode;
 
 public class TimerView extends View {
 
     private Timer owner;
+    private LinkManager linkManager = LinkManager.getInstance();
+
+    private LinkIndicator linkIndicator;
 
     private final int backgroundColor = getResources().getColor(R.color.timerBackground),
             progressColor = getResources().getColor(R.color.timerProgress),
@@ -42,7 +48,7 @@ public class TimerView extends View {
     RectF progressRect = new RectF();
     Rect textBounds = new Rect();
 
-
+    private float startX, startY, endX, endY;
 
     public TimerView(Context context, int idX, int idY) {
         super(context);
@@ -67,19 +73,23 @@ public class TimerView extends View {
         init();
     }
 
-    private void init(){// prepare paint
+    private void init(){
+        linkIndicator = new LinkIndicator(textSizeTime*3/4);
+        // prepare paint
         backGroundPaint = new Paint();
         backGroundPaint.setStyle(Paint.Style.FILL);
-        backGroundPaint.setAntiAlias(false);
+        backGroundPaint.setAntiAlias(true);
         progressPaint = new Paint(backGroundPaint);
         backGroundPaint.setColor(backgroundColor);
         progressPaint.setColor(progressColor);
+        progressPaint.setAntiAlias(true);
         // text
         textPaintTime = new Paint();
         textPaintTime.setColor(writingColor);
         textPaintTime.setTextAlign(Paint.Align.CENTER);
         textPaintTime.setTextSize(textSizeTime);
         textPaintTime.setTypeface(font);
+        textPaintTime.setAntiAlias(true);
         textPaintName = new Paint(textPaintTime);
 
         final TimerView view = this;
@@ -87,11 +97,10 @@ public class TimerView extends View {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 int dragEvent = event.getAction();
-
+                System.out.println("some drag");
                 switch (dragEvent){
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        break;
-                    case DragEvent.ACTION_DRAG_EXITED:
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        System.out.println("drag started");
                         break;
                     case DragEvent.ACTION_DROP:
                         if (isActive) {
@@ -148,8 +157,11 @@ public class TimerView extends View {
 
             adjustText(textBounds, width, name, canvas, height);
             canvas.drawText(owner.getTimeString(), width / 2, 3* height / 4 + textBounds.height()/2, textPaintTime);
+        }
 
-//            lastTimerName = name;
+        if (linkIndicator.shouldDraw()){
+            canvas.drawCircle((width / 10), (height / 10) * 8, linkIndicator.getRadius(), linkIndicator.getPaint());
+            canvas.drawText(Integer.toString(linkIndicator.getLink()), (width / 10), (height / 10) * 8 + textBounds.height()/2, textPaintTime);
         }
     }
 
@@ -163,27 +175,10 @@ public class TimerView extends View {
         textSize = (textSizeTime+(int)(textSizeTime*0.2f)) * 2 / 3;
         textPaintName.setTextSize(textSize);
         if (name.length() > charsPerLine) {
-//            textSize = textSizeTime * 2 / 3;
             String[] tmp = {name.substring(0, charsPerLine),name.substring(charsPerLine)};
-//            textPaintName.setTextSize(textSize);
             canvas.drawText(tmp[0], width / 2f, height / 4 + textBounds.height() / 2 - textSize/2, textPaintName);
             canvas.drawText(tmp[1], width / 2f, height / 4 + textBounds.height() / 2 + textSize/2, textPaintName);
         }else{
-//            if (lastTimerName != name) {
-//                boolean adjustTextSize = true;
-//                while (adjustTextSize) {
-//                    if (textBounds.width() > (float) width * 0.96f && textSize >= textSizeTime /2) {
-//                        textSize--;
-//                    } else if (textBounds.width() < ((float) width) * 0.85f && textPaintName.getTextSize() < textSizeTime) {
-//                        textSize++;
-//                    } else {
-//                        adjustTextSize = false;
-//                    }
-//                    textPaintName.setTextSize(textSize);
-//                    textPaintName.getTextBounds(name, 0, name.length(), textBounds);
-//                    textNameWidth = textBounds.width();
-//                }
-//            }
             canvas.drawText(name, width / 2f, height / 4 + textBounds.height() / 2, textPaintName);
         }
     }
@@ -236,5 +231,9 @@ public class TimerView extends View {
 
     public int getIndex(){
         return idY * MainActivity.gridLayout.getColumnCount() + idX;
+    }
+
+    public LinkIndicator getLinkIndicator() {
+        return linkIndicator;
     }
 }
