@@ -70,10 +70,12 @@ public class Timer {
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                ClipData clipData;
+                View.DragShadowBuilder dragShadowBuilder;
                 switch (TimerManager.getUserMode()){
                     case EDIT:
-                        ClipData clipData = ClipData.newPlainText("","");
-                        View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(view);
+                        clipData = ClipData.newPlainText("","");
+                        dragShadowBuilder = new View.DragShadowBuilder(view);
                         if (android.os.Build.VERSION.SDK_INT > 23) {
                             view.startDragAndDrop(clipData, dragShadowBuilder, view, 0);
                         }else {
@@ -87,6 +89,15 @@ public class Timer {
                             throw new NullPointerException("can't open edit page because of missing main activity");
                         }
                         return false;
+                    case LINK:
+                        clipData = ClipData.newPlainText("","");
+                        dragShadowBuilder = new View.DragShadowBuilder(null);
+                        if (android.os.Build.VERSION.SDK_INT > 23) {
+                            view.startDragAndDrop(clipData, dragShadowBuilder, view, 0);
+                        }else {
+                            view.startDrag(clipData, dragShadowBuilder,view, 0);
+                        }
+                        return true;
                     default:
                         return false;
                 }

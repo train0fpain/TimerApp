@@ -59,7 +59,7 @@ public class CustomGridLayout extends GridLayout {
         }
     }
 
-    @Override
+    /*@Override
     public boolean onInterceptTouchEvent(MotionEvent event){
         // return true to pass on to onTouchEvent
         // else handle in child
@@ -101,7 +101,7 @@ public class CustomGridLayout extends GridLayout {
         }else {
             return false;
         }
-    }
+    }*/
 
     private Timer calculateChild(float x, float y){
         float cellWidth = getChildAt(0).getWidth() + MainActivity.MARGIN*2;

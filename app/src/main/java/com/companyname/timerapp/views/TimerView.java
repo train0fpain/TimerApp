@@ -97,18 +97,26 @@ public class TimerView extends View {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 int dragEvent = event.getAction();
-                System.out.println("some drag");
                 switch (dragEvent){
                     case DragEvent.ACTION_DRAG_STARTED:
                         System.out.println("drag started");
                         break;
+                    case DragEvent.ACTION_DRAG_LOCATION:
+                        System.out.println("location: "+event.getX());
                     case DragEvent.ACTION_DROP:
-                        if (isActive) {
-                            if (event.getLocalState() != view) {
-                                TimerManager.swappSlot((TimerView) event.getLocalState(), view);
-                            }
-                        }else{
-                            TimerManager.dropIntoSlot((TimerView) event.getLocalState(), view);
+                        switch(TimerManager.getUserMode()) {
+                            case EDIT:
+                                if (isActive) {
+                                    if (event.getLocalState() != view) {
+                                        TimerManager.swappSlot((TimerView) event.getLocalState(), view);
+                                    }
+                                } else {
+                                    TimerManager.dropIntoSlot((TimerView) event.getLocalState(), view);
+                                }
+                                break;
+                            case LINK:
+//                                LinkManager.getInstance().linkTimer();
+                                break;
                         }
                         break;
                 }

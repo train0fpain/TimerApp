@@ -29,6 +29,11 @@ public class LinkManager {
         this.linkLine = linkLine;
     }
 
+    public void linkTimer(Timer startTimer, Timer endTimer){
+        this.startTimer = startTimer;
+        linkTimer(endTimer);
+    }
+
     public void linkTimer(Timer endTimer){
         System.out.println("start: "+startTimer);
         System.out.println("end: "+endTimer);
