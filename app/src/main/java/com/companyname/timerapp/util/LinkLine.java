@@ -10,18 +10,21 @@ import android.view.View;
 
 public class LinkLine extends View {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Float startX = null;
-    private Float startY = null;
-    private float endX;
-    private float endY;
+    Vector2f start;
+    Vector2f end = new Vector2f();
     private boolean drawLine = false;
 
     public LinkLine(Context context) {
         super(context);
+        init();
     }
 
     public LinkLine(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init();
+    }
+
+    private void init(){
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.RED);
         paint.setStrokeWidth(6);
@@ -32,53 +35,26 @@ public class LinkLine extends View {
         super.onDraw(canvas);
         if (drawLine) {
             // make offset from circle center
-            canvas.drawLine(startX, startY, endX, endY, paint);
-            canvas.drawCircle(startX, startY, 8, paint);
+            Vector2f offset = Vector2f.sub(end, start);
+            offset.normalize().scale(8).add(start);
+            canvas.drawLine(offset.x, offset.y, end.x, end.y, paint);
+            canvas.drawCircle(start.x, start.y, 8, paint);
         }
     }
 
     public void drawLine(Vector2f end){
         drawLine = true;
-        if (startX == null){
-            startX = end.x;
-            startY = end.y;
+        if (start == null){
+            start = new Vector2f(end.x, end.y);
         }
-        this.endX = end.x;
-        this.endY = end.y;
-        System.out.println(String.format("Draw at start(%f, %f) to end(%f, %f)", startX, startY, endX, endY));
-        invalidate();
-    }
-
-    public void drawLine(Vector2f start, Vector2f end){
-        this.startX = start.x;
-        this.startY = start.y;
-        this.endX = end.x;
-        this.endY = end.y;
-        invalidate();
-    }
-
-    public void drawLine(float startX, float startY, float endX, float endY){
-        this.startX = startX;
-        this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
-        invalidate();
-    }
-
-    public void drawLine(float endX, float endY){
-        this.endX = endX;
-        this.endY = endY;
+        this.end.x = end.x;
+        this.end.y = end.y;
         invalidate();
     }
 
     public void stopDrawLine(){
         drawLine = false;
-        startX = null;
-        startY = null;
+        start = null;
         invalidate();
-    }
-
-    public void setDrawLine(boolean drawLine) {
-        this.drawLine = drawLine;
     }
 }

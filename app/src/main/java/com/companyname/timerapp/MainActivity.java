@@ -238,10 +238,6 @@ public class MainActivity extends AppCompatActivity
                 final TimerView tView = new TimerView(this, xPos, yPos);
                 timerViews[yPos*numOfCol + xPos] = tView;
 
-
-
-//                System.out.println(xPos+yPos+" at x: " +pos.getX()+ " y: "+pos.getY());
-
                 final int finalYPos = yPos;
                 final int finalXPos = xPos;
                 tView.setOnClickListener(new View.OnClickListener() {
@@ -259,9 +255,12 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        Timer timer;
         for (int i=0; i<TimerManager.getTimers().length; i++){
-            if (TimerManager.getTimer(i) != null){
-                TimerManager.getTimer(i).setView(timerViews[i]);
+            timer = TimerManager.getTimer(i);
+            if (timer != null){
+                timer.setView(timerViews[i]);
+                timer.updateLinkInView();
             }
         }
 

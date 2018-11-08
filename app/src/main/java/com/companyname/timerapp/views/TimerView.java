@@ -25,6 +25,7 @@ public class TimerView extends View {
 
     private Timer owner;
     private LinkManager linkManager = LinkManager.getInstance();
+    private LinkIndicator linkIndicator;
 
     private final int backgroundColor = getResources().getColor(R.color.timerBackground),
             progressColor = getResources().getColor(R.color.timerProgress),
@@ -82,6 +83,7 @@ public class TimerView extends View {
     }
 
     private void init(){// prepare paint
+        linkIndicator = new LinkIndicator(textSizeTime*3/4);
 
         backGroundPaint = new Paint();
         backGroundPaint.setStyle(Paint.Style.FILL);
@@ -105,14 +107,10 @@ public class TimerView extends View {
             public boolean onDrag(View v, DragEvent event) {
                 int dragEvent = event.getAction();
                 switch (dragEvent){
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        System.out.println("drag started");
-                        if (owner != null){
-                            LinkManager.getInstance().setStartTimer(owner);
-                        }
-                        break;
                     case DragEvent.ACTION_DRAG_LOCATION:
-                        LinkManager.getInstance().getLinkLine().drawLine(getTouchPos(event));
+                        if (TimerManager.getUserMode() == UserMode.LINK) {
+                            linkManager.getLinkLine().drawLine(getTouchPos(event));
+                        }
                         break;
                     case DragEvent.ACTION_DROP:
                         if (TimerManager.getUserMode() == UserMode.EDIT) {
@@ -124,11 +122,10 @@ public class TimerView extends View {
                                 TimerManager.dropIntoSlot((TimerView) event.getLocalState(), view);
                             }
                         }else if (TimerManager.getUserMode() == UserMode.LINK){
-                            System.out.println("drop");
                             if (owner != null) {
-                                LinkManager.getInstance().linkTimer(owner);
+                                linkManager.linkTimer(owner);
                             }
-                            LinkManager.getInstance().getLinkLine().stopDrawLine();
+                            linkManager.getLinkLine().stopDrawLine();
                         }
                         break;
                 }
@@ -187,6 +184,11 @@ public class TimerView extends View {
 
             adjustText(textBounds, width, name, canvas, height);
             canvas.drawText(owner.getTimeString(), width / 2, 3* height / 4 + textBounds.height()/2, textPaintTime);
+        }
+
+        if (linkIndicator.shouldDraw()){
+            canvas.drawCircle((width / 10), (height / 10) * 8, linkIndicator.getRadius(), linkIndicator.getPaint());
+            canvas.drawText(Integer.toString(linkIndicator.getLink()), (width / 10), (height / 10) * 8 + textBounds.height()/2, textPaintTime);
         }
     }
 
@@ -256,5 +258,16 @@ public class TimerView extends View {
 
     public int getIndex(){
         return idY * MainActivity.gridLayout.getColumnCount() + idX;
+    }
+
+    public LinkIndicator getLinkIndicator() {
+        return linkIndicator;
+    }
+
+    public void setViewToEmpty(){
+        owner = null;
+        isActive = false;
+        linkIndicator.setLink(-1);
+        requestDraw();
     }
 }

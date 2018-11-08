@@ -1,7 +1,6 @@
 package com.companyname.timerapp.util;
 
 import com.companyname.timerapp.timerClasses.Timer;
-import com.companyname.timerapp.timerClasses.TimerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,16 +63,30 @@ public class LinkManager {
         }
     }
 
-    public void removeFromLink(Timer timer){
-        List<Timer> tempTimers = links.get(timer.getLinkId());
-        if (tempTimers.size() <= 2){
-            for (Timer tmpTimer : tempTimers){
-                tmpTimer.setLinkId(-1);
+    public void linkFromDb(int id, Timer timer){
+        if (id >= 0) {
+            while (links.size() <= id) {
+                links.add(new ArrayList<Timer>());
             }
-            links.remove(timer.getLinkId());
-        } else {
+            links.get(id).add(timer);
+        }
+    }
+
+    public void removeFromLink(Timer timer){
+        int linkId= timer.getLinkId();
+        if (linkId >= links.size()){
             timer.setLinkId(-1);
-            tempTimers.remove(timer);
+        }else {
+            List<Timer> tempTimers = links.get(linkId);
+            if (tempTimers.size() <= 2) {
+                for (Timer tmpTimer : tempTimers) {
+                    tmpTimer.setLinkId(-1);
+                }
+                links.remove(linkId);
+            } else {
+                timer.setLinkId(-1);
+                tempTimers.remove(timer);
+            }
         }
     }
 
@@ -84,7 +97,6 @@ public class LinkManager {
     }
 
     public void setStartTimer(Timer startTimer) {
-        System.out.println("timer: "+startTimer);
         this.startTimer = startTimer;
     }
 }

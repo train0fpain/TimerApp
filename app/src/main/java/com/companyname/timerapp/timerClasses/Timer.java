@@ -11,6 +11,7 @@ import com.companyname.timerapp.util.Start;
 import com.companyname.timerapp.views.TimerView;
 
 public class Timer {
+    private LinkManager linkManager = LinkManager.getInstance();
     private TimeFormat time;
     private TimerView view;
     private String name = "Timer name";
@@ -55,10 +56,10 @@ public class Timer {
                             editClick(view, doubleTap);
                             break;
                         case LINK:
-
+                            linkClick(doubleTap);
                             break;
                         case NORMAL:
-                            normalClick(view, doubleTap);
+                            normalClick(doubleTap);
                             break;
                     }
                     doubleTap = 0;
@@ -88,15 +89,16 @@ public class Timer {
                         }
                         return false;
                     case LINK:
-                        ClipData clipData2 = ClipData.newPlainText("id",Integer.toString(index));
-                        View.DragShadowBuilder dragShadowBuilder2 = new View.DragShadowBuilder(null);
-                        if (android.os.Build.VERSION.SDK_INT > 23) {
-                            view.startDragAndDrop(clipData2, dragShadowBuilder2, null, 0);
-                        }else {
-                            view.startDrag(clipData2, dragShadowBuilder2,null, 0);
+                        if (view.getOwner() != null) {
+                            ClipData clipData2 = ClipData.newPlainText("id", Integer.toString(index));
+                            View.DragShadowBuilder dragShadowBuilder2 = new View.DragShadowBuilder(null);
+                            if (android.os.Build.VERSION.SDK_INT > 23) {
+                                view.startDragAndDrop(clipData2, dragShadowBuilder2, null, 0);
+                            } else {
+                                view.startDrag(clipData2, dragShadowBuilder2, null, 0);
+                            }
+                            linkManager.setStartTimer(view.getOwner());
                         }
-                        System.out.println("start drag from long click");
-//                        LinkManager.getInstance().getLinkLine().drawLine(getTouchPos(event), getTouchPos(event));
                         return true;
                     default:
                         return false;
@@ -125,10 +127,9 @@ public class Timer {
         }
     }
 
-    private void normalClick(final View view, int doubleTap){
+    private void normalClick(int doubleTap){
         switch (doubleTap){
             case 1:
-                System.out.println("link id: "+linkId);
                 if (time.getCurrentSeconds() <= 0) {
                     endClicks++;
                     if (endClicks >= 2) {
@@ -139,14 +140,24 @@ public class Timer {
                     }
                 } else {
                     if (time.getCurrentSeconds() == time.getTotalSeconds() && linkId >= 0){
-                        System.out.println("start linked");
-                        LinkManager.getInstance().startLinkedTimer(linkId);
+                        linkManager.startLinkedTimer(linkId);
                     }else {
                         setPause(!pause);
                     }
                 }
                 break;
             case 2:
+                reset();
+                break;
+        }
+    }
+
+    private void linkClick(int doubleTap){
+        switch (doubleTap) {
+            case 1:
+                break;
+            case 2:
+                linkManager.removeFromLink(this);
                 reset();
                 break;
         }
@@ -233,7 +244,18 @@ public class Timer {
         return linkId;
     }
 
+    public void updateLinkInView(){
+        view.getLinkIndicator().setLink(linkId);
+        view.requestDraw();
+        linkManager.linkFromDb(linkId, this);
+    }
+
     public void setLinkId(int linkId) {
         this.linkId = linkId;
+        if (view != null) {
+            view.getLinkIndicator().setLink(linkId);
+            view.requestDraw();
+            Start.getDbHelper().updateLink(index, linkId);
+        }
     }
 }

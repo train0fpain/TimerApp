@@ -31,10 +31,12 @@ public class Start extends Application {
         ArrayList<String> listDataNames = new ArrayList<>();
         ArrayList<Integer> listDataTimes = new ArrayList<>();
         ArrayList<Integer> listDataIds = new ArrayList<>();
+        ArrayList<Integer> listDataLinks = new ArrayList<>();
         while (data.moveToNext()){
+            listDataIds.add(data.getInt(0));
             listDataNames.add(data.getString(1));
             listDataTimes.add(data.getInt(2));
-            listDataIds.add(data.getInt(0));
+            listDataLinks.add(data.getInt(3));
         }
 
         for (int i=0; i< listDataNames.size(); i++){
@@ -43,6 +45,7 @@ public class Start extends Application {
             tmp.setName(listDataNames.get(i));
             tmp.setTime(new TimeFormat(listDataTimes.get(i)));
             tmp.setIndex(listDataIds.get(i));
+            tmp.setLinkId(listDataLinks.get(i));
         }
     }
 
