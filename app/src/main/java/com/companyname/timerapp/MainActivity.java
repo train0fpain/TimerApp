@@ -30,6 +30,7 @@ import com.companyname.timerapp.timerClasses.TimerManager;
 import com.companyname.timerapp.util.LinkLine;
 import com.companyname.timerapp.util.LinkManager;
 import com.companyname.timerapp.util.UserMode;
+import com.companyname.timerapp.util.Vector2f;
 import com.companyname.timerapp.views.TimerView;
 
 public class MainActivity extends AppCompatActivity
@@ -236,6 +237,11 @@ public class MainActivity extends AppCompatActivity
             for(int xPos=0; xPos<numOfCol; xPos++){
                 final TimerView tView = new TimerView(this, xPos, yPos);
                 timerViews[yPos*numOfCol + xPos] = tView;
+
+
+
+//                System.out.println(xPos+yPos+" at x: " +pos.getX()+ " y: "+pos.getY());
+
                 final int finalYPos = yPos;
                 final int finalXPos = xPos;
                 tView.setOnClickListener(new View.OnClickListener() {

@@ -19,6 +19,7 @@ import com.companyname.timerapp.timerClasses.TimerManager;
 import com.companyname.timerapp.util.LinkManager;
 import com.companyname.timerapp.util.Start;
 import com.companyname.timerapp.util.UserMode;
+import com.companyname.timerapp.util.Vector2f;
 
 public class TimerView extends View {
 
@@ -41,6 +42,8 @@ public class TimerView extends View {
     private boolean isActive = false;
     private int textSizeTime = 26;
     private int textSize = 26;
+
+    private Vector2f pos;
 
     RectF progressRect = new RectF();
     Rect textBounds = new Rect();
@@ -70,7 +73,16 @@ public class TimerView extends View {
         init();
     }
 
+    public Vector2f getPos() {
+        return pos;
+    }
+
+    public void setPos(Vector2f pos) {
+        this.pos = pos;
+    }
+
     private void init(){// prepare paint
+
         backGroundPaint = new Paint();
         backGroundPaint.setStyle(Paint.Style.FILL);
         backGroundPaint.setAntiAlias(true);
@@ -92,18 +104,31 @@ public class TimerView extends View {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 int dragEvent = event.getAction();
-                System.out.println("some drag");
                 switch (dragEvent){
                     case DragEvent.ACTION_DRAG_STARTED:
                         System.out.println("drag started");
+                        if (owner != null){
+                            LinkManager.getInstance().setStartTimer(owner);
+                        }
+                        break;
+                    case DragEvent.ACTION_DRAG_LOCATION:
+                        LinkManager.getInstance().getLinkLine().drawLine(getTouchPos(event));
                         break;
                     case DragEvent.ACTION_DROP:
-                        if (isActive) {
-                            if (event.getLocalState() != view) {
-                                TimerManager.swappSlot((TimerView) event.getLocalState(), view);
+                        if (TimerManager.getUserMode() == UserMode.EDIT) {
+                            if (isActive) {
+                                if (event.getLocalState() != view) {
+                                    TimerManager.swappSlot((TimerView) event.getLocalState(), view);
+                                }
+                            } else {
+                                TimerManager.dropIntoSlot((TimerView) event.getLocalState(), view);
                             }
-                        }else{
-                            TimerManager.dropIntoSlot((TimerView) event.getLocalState(), view);
+                        }else if (TimerManager.getUserMode() == UserMode.LINK){
+                            System.out.println("drop");
+                            if (owner != null) {
+                                LinkManager.getInstance().linkTimer(owner);
+                            }
+                            LinkManager.getInstance().getLinkLine().stopDrawLine();
                         }
                         break;
                 }
@@ -111,6 +136,10 @@ public class TimerView extends View {
                 return true;
             }
         });
+    }
+
+    private Vector2f getTouchPos(DragEvent event){
+        return new Vector2f(pos.x + event.getX(), pos.y + event.getY());
     }
 
     public void setOwner(Timer owner){
@@ -121,12 +150,18 @@ public class TimerView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec),
                 MeasureSpec.getSize(heightMeasureSpec));
-        // needed?
-    }
 
+    }
 
     @Override
     protected void onDraw(Canvas canvas){
+        if (pos == null) {
+            int[] out = new int[2];
+            int[] offsetTop = new int[2];
+            ((View)getParent()).getLocationInWindow(offsetTop);
+            getLocationInWindow(out);
+            pos = new Vector2f(out[0], out[1] - offsetTop[1]);
+        }
         width = this.getMeasuredWidth();
         height = this.getMeasuredHeight();
         canvas.drawRoundRect(new RectF(0, 0, (float)width, height), 30, 30, backGroundPaint);

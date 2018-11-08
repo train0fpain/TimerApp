@@ -10,8 +10,8 @@ import android.view.View;
 
 public class LinkLine extends View {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private float startX;
-    private float startY;
+    private Float startX = null;
+    private Float startY = null;
     private float endX;
     private float endY;
     private boolean drawLine = false;
@@ -37,6 +37,26 @@ public class LinkLine extends View {
         }
     }
 
+    public void drawLine(Vector2f end){
+        drawLine = true;
+        if (startX == null){
+            startX = end.x;
+            startY = end.y;
+        }
+        this.endX = end.x;
+        this.endY = end.y;
+        System.out.println(String.format("Draw at start(%f, %f) to end(%f, %f)", startX, startY, endX, endY));
+        invalidate();
+    }
+
+    public void drawLine(Vector2f start, Vector2f end){
+        this.startX = start.x;
+        this.startY = start.y;
+        this.endX = end.x;
+        this.endY = end.y;
+        invalidate();
+    }
+
     public void drawLine(float startX, float startY, float endX, float endY){
         this.startX = startX;
         this.startY = startY;
@@ -45,8 +65,16 @@ public class LinkLine extends View {
         invalidate();
     }
 
+    public void drawLine(float endX, float endY){
+        this.endX = endX;
+        this.endY = endY;
+        invalidate();
+    }
+
     public void stopDrawLine(){
         drawLine = false;
+        startX = null;
+        startY = null;
         invalidate();
     }
 

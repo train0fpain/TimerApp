@@ -87,6 +87,17 @@ public class Timer {
                             throw new NullPointerException("can't open edit page because of missing main activity");
                         }
                         return false;
+                    case LINK:
+                        ClipData clipData2 = ClipData.newPlainText("id",Integer.toString(index));
+                        View.DragShadowBuilder dragShadowBuilder2 = new View.DragShadowBuilder(null);
+                        if (android.os.Build.VERSION.SDK_INT > 23) {
+                            view.startDragAndDrop(clipData2, dragShadowBuilder2, null, 0);
+                        }else {
+                            view.startDrag(clipData2, dragShadowBuilder2,null, 0);
+                        }
+                        System.out.println("start drag from long click");
+//                        LinkManager.getInstance().getLinkLine().drawLine(getTouchPos(event), getTouchPos(event));
+                        return true;
                     default:
                         return false;
                 }

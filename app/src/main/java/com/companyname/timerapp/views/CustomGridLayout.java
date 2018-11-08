@@ -15,6 +15,7 @@ import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
 import com.companyname.timerapp.util.LinkManager;
 import com.companyname.timerapp.util.UserMode;
+import com.companyname.timerapp.util.Vector2f;
 
 public class CustomGridLayout extends GridLayout {
 
@@ -58,7 +59,7 @@ public class CustomGridLayout extends GridLayout {
         }
     }
 
-    @Override
+    /*@Override
     public boolean onInterceptTouchEvent(MotionEvent event){
         // return true to pass on to onTouchEvent
         // else handle in child
@@ -88,7 +89,7 @@ public class CustomGridLayout extends GridLayout {
         }else {
             return false;
         }
-    }
+    }*/
 
     private Timer calculateChild(float x, float y){
         float cellWidth = getChildAt(0).getWidth() + MainActivity.MARGIN*2;
@@ -97,5 +98,6 @@ public class CustomGridLayout extends GridLayout {
         int yIndex =(int) (y / cellHeight);
         return TimerManager.getTimer(yIndex * getColumnCount() + xIndex);
     }
+
 
 }
