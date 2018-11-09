@@ -30,36 +30,45 @@ public class LinkManager {
     }
 
     public void linkTimer(Timer endTimer){
+        System.out.println("start: "+startTimer);
+        System.out.println("end: "+endTimer);
         if (startTimer == endTimer || startTimer == null || endTimer == null){
         } else {
             if (endTimer.getLinkId() == -1) {
                 if (startTimer.getLinkId() == -1) {
                     newLink(endTimer, startTimer);
                 } else {
-                    addToLink(startTimer.getLinkId(), endTimer);
+                        addToLink(startTimer.getLinkId(), endTimer);
                 }
             } else {
                 addToLink(endTimer.getLinkId(), startTimer);
             }
         }
+        startTimer = null;
+        System.out.println(startTimer);
     }
 
     private void newLink(Timer timer1, Timer timer2){
-        int id = links.size();
-        links.add(new ArrayList<Timer>());
-        links.get(id).add(timer1);
-        links.get(id).add(timer2);
-        timer1.setLinkId(id);
-        timer2.setLinkId(id);
+        if (timer1 != null && timer2 != null) {
+            int id = links.size();
+            links.add(new ArrayList<Timer>());
+            links.get(id).add(timer1);
+            links.get(id).add(timer2);
+            timer1.setLinkId(id);
+            timer2.setLinkId(id);
+        }
+        startTimer = null;
     }
 
     private void addToLink(int id, Timer timer){
-        if (timer.getLinkId() != -1){
-            removeFromLink(timer);
-        }
-        if (links.size() > id && id >= 0) {
-            links.get(id).add(timer);
-            timer.setLinkId(id);
+        if (startTimer.getLinkId() != id) {
+            if (timer.getLinkId() != -1) {
+                removeFromLink(timer);
+            }
+            if (links.size() > id && id >= 0) {
+                links.get(id).add(timer);
+                timer.setLinkId(id);
+            }
         }
     }
 

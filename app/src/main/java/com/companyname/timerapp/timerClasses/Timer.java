@@ -254,6 +254,7 @@ public class Timer {
 
     public void setLinkId(int linkId) {
         this.linkId = linkId;
+
         if (view != null) {
             view.getLinkIndicator().setLink(linkId);
             view.requestDraw();

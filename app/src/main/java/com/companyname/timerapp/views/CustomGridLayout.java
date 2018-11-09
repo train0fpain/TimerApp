@@ -20,6 +20,7 @@ public class CustomGridLayout extends GridLayout {
     private float endX;
     private float endY;
     private boolean drawLine = false;
+    private boolean moved = false;
 
     private LinkManager linkManager = LinkManager.getInstance();
 
@@ -74,10 +75,22 @@ public class CustomGridLayout extends GridLayout {
                     endX = event.getX();
                     endY = event.getY();
                     linkManager.getLinkLine().drawLine(startX, startY, endX, endY);
+                    moved = true;
                     return false;
                 case MotionEvent.ACTION_UP:
-                    linkManager.linkTimer(calculateChild(endX, endY));
+                    endX = event.getX();
+                    endY = event.getY();
+                    Timer timer = calculateChild(endX, endY);
+                    if (moved) {
+
+                        linkManager.linkTimer(timer);
+                    }else{
+                        if (timer.getLinkId() >= 0) {
+                            linkManager.removeFromLink(timer);
+                        }
+                    }
                     linkManager.getLinkLine().stopDrawLine();
+                    moved = false;
                     return false;
             }
             return false;
