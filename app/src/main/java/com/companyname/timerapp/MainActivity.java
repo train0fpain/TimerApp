@@ -27,10 +27,9 @@ import android.widget.TextView;
 
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
-import com.companyname.timerapp.util.LinkLine;
-import com.companyname.timerapp.util.LinkManager;
-import com.companyname.timerapp.util.UserMode;
-import com.companyname.timerapp.util.Vector2f;
+import com.companyname.timerapp.linking.LinkLine;
+import com.companyname.timerapp.linking.LinkManager;
+import com.companyname.timerapp.modesAndStates.UserMode;
 import com.companyname.timerapp.views.TimerView;
 
 public class MainActivity extends AppCompatActivity

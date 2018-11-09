@@ -2,11 +2,11 @@ package com.companyname.timerapp.timerClasses;
 
 import android.content.ClipData;
 import android.os.Handler;
-import android.view.DragEvent;
 import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
-import com.companyname.timerapp.util.LinkManager;
+import com.companyname.timerapp.linking.LinkManager;
+import com.companyname.timerapp.modesAndStates.TimerState;
 import com.companyname.timerapp.util.Start;
 import com.companyname.timerapp.views.TimerView;
 
@@ -21,6 +21,8 @@ public class Timer {
     private int endClicks = 0;
     private int doubleTap = 0;
     private int linkId = -1;
+
+    private TimerState timerState = TimerState.IDLE;
 
     public Timer(TimerView view) {
         this.time = new TimeFormat(3);

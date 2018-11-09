@@ -1,4 +1,4 @@
-package com.companyname.timerapp.util;
+package com.companyname.timerapp.linking;
 
 import com.companyname.timerapp.timerClasses.Timer;
 

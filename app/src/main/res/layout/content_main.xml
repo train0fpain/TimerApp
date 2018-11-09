@@ -92,7 +92,7 @@
                 android:rowCount="4">
 
             </com.companyname.timerapp.views.CustomGridLayout>
-            <com.companyname.timerapp.util.LinkLine
+            <com.companyname.timerapp.linking.LinkLine
                 android:id="@+id/linkLine"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

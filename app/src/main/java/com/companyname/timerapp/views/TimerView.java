@@ -9,16 +9,15 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
-import com.companyname.timerapp.util.LinkManager;
+import com.companyname.timerapp.linking.LinkManager;
 import com.companyname.timerapp.util.Start;
-import com.companyname.timerapp.util.UserMode;
+import com.companyname.timerapp.modesAndStates.UserMode;
 import com.companyname.timerapp.util.Vector2f;
 
 public class TimerView extends View {
@@ -48,8 +47,6 @@ public class TimerView extends View {
 
     RectF progressRect = new RectF();
     Rect textBounds = new Rect();
-
-    private float startX, startY, endX, endY;
 
     public TimerView(Context context, int idX, int idY) {
         super(context);

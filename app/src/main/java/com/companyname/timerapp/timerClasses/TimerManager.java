@@ -5,14 +5,10 @@ import android.os.Handler;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
-import com.companyname.timerapp.util.LinkLine;
-import com.companyname.timerapp.util.LinkManager;
+import com.companyname.timerapp.linking.LinkManager;
 import com.companyname.timerapp.util.Start;
-import com.companyname.timerapp.util.UserMode;
+import com.companyname.timerapp.modesAndStates.UserMode;
 import com.companyname.timerapp.views.TimerView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TimerManager {
 

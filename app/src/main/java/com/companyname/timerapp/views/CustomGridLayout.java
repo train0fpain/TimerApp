@@ -4,18 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.view.MotionEvent;
 import android.widget.GridLayout;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
-import com.companyname.timerapp.util.LinkManager;
-import com.companyname.timerapp.util.UserMode;
-import com.companyname.timerapp.util.Vector2f;
+import com.companyname.timerapp.linking.LinkManager;
 
 public class CustomGridLayout extends GridLayout {
 
