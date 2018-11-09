@@ -9,23 +9,21 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
-import com.companyname.timerapp.util.LinkIndicator;
-import com.companyname.timerapp.util.LinkManager;
+import com.companyname.timerapp.linking.LinkManager;
 import com.companyname.timerapp.util.Start;
-import com.companyname.timerapp.util.UserMode;
+import com.companyname.timerapp.modesAndStates.UserMode;
+import com.companyname.timerapp.util.Vector2f;
 
 public class TimerView extends View {
 
     private Timer owner;
     private LinkManager linkManager = LinkManager.getInstance();
-
     private LinkIndicator linkIndicator;
 
     private final int backgroundColor = getResources().getColor(R.color.timerBackground),
@@ -45,10 +43,10 @@ public class TimerView extends View {
     private int textSizeTime = 26;
     private int textSize = 26;
 
+    private Vector2f pos;
+
     RectF progressRect = new RectF();
     Rect textBounds = new Rect();
-
-    private float startX, startY, endX, endY;
 
     public TimerView(Context context, int idX, int idY) {
         super(context);
@@ -73,9 +71,17 @@ public class TimerView extends View {
         init();
     }
 
-    private void init(){
+    public Vector2f getPos() {
+        return pos;
+    }
+
+    public void setPos(Vector2f pos) {
+        this.pos = pos;
+    }
+
+    private void init(){// prepare paint
         linkIndicator = new LinkIndicator(textSizeTime*3/4);
-        // prepare paint
+
         backGroundPaint = new Paint();
         backGroundPaint.setStyle(Paint.Style.FILL);
         backGroundPaint.setAntiAlias(true);
@@ -97,18 +103,26 @@ public class TimerView extends View {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 int dragEvent = event.getAction();
-                System.out.println("some drag");
                 switch (dragEvent){
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        System.out.println("drag started");
+                    case DragEvent.ACTION_DRAG_LOCATION:
+                        if (TimerManager.getUserMode() == UserMode.LINK) {
+                            linkManager.getLinkLine().drawLine(getTouchPos(event));
+                        }
                         break;
                     case DragEvent.ACTION_DROP:
-                        if (isActive) {
-                            if (event.getLocalState() != view) {
-                                TimerManager.swappSlot((TimerView) event.getLocalState(), view);
+                        if (TimerManager.getUserMode() == UserMode.EDIT) {
+                            if (isActive) {
+                                if (event.getLocalState() != view) {
+                                    TimerManager.swappSlot((TimerView) event.getLocalState(), view);
+                                }
+                            } else {
+                                TimerManager.dropIntoSlot((TimerView) event.getLocalState(), view);
                             }
-                        }else{
-                            TimerManager.dropIntoSlot((TimerView) event.getLocalState(), view);
+                        }else if (TimerManager.getUserMode() == UserMode.LINK){
+                            if (owner != null) {
+                                linkManager.linkTimer(owner);
+                            }
+                            linkManager.getLinkLine().stopDrawLine();
                         }
                         break;
                 }
@@ -116,6 +130,10 @@ public class TimerView extends View {
                 return true;
             }
         });
+    }
+
+    private Vector2f getTouchPos(DragEvent event){
+        return new Vector2f(pos.x + event.getX(), pos.y + event.getY());
     }
 
     public void setOwner(Timer owner){
@@ -126,12 +144,18 @@ public class TimerView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec),
                 MeasureSpec.getSize(heightMeasureSpec));
-        // needed?
-    }
 
+    }
 
     @Override
     protected void onDraw(Canvas canvas){
+        if (pos == null) {
+            int[] out = new int[2];
+            int[] offsetTop = new int[2];
+            ((View)getParent()).getLocationInWindow(offsetTop);
+            getLocationInWindow(out);
+            pos = new Vector2f(out[0], out[1] - offsetTop[1]);
+        }
         width = this.getMeasuredWidth();
         height = this.getMeasuredHeight();
         canvas.drawRoundRect(new RectF(0, 0, (float)width, height), 30, 30, backGroundPaint);
@@ -235,5 +259,12 @@ public class TimerView extends View {
 
     public LinkIndicator getLinkIndicator() {
         return linkIndicator;
+    }
+
+    public void setViewToEmpty(){
+        owner = null;
+        isActive = false;
+        linkIndicator.setLink(-1);
+        requestDraw();
     }
 }

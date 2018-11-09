@@ -1,4 +1,4 @@
-package com.companyname.timerapp.util;
+package com.companyname.timerapp.modesAndStates;
 
 public enum UserMode {
     NORMAL,

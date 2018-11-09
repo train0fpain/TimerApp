@@ -5,13 +5,10 @@ import android.os.Handler;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
-import com.companyname.timerapp.util.LinkLine;
+import com.companyname.timerapp.linking.LinkManager;
 import com.companyname.timerapp.util.Start;
-import com.companyname.timerapp.util.UserMode;
+import com.companyname.timerapp.modesAndStates.UserMode;
 import com.companyname.timerapp.views.TimerView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TimerManager {
 
@@ -98,15 +95,16 @@ public class TimerManager {
             newTimer.setIndex(slot);
             newTimer.setView(MainActivity.getViewAt(slot));
             if (addData) {
-                addData(slot, newTimer.getName(), newTimer.getTimeSeconds());
+                System.out.println("add data");
+                addData(slot, newTimer.getName(), newTimer.getTimeSeconds(), newTimer.getLinkId());
             }
             return timers[slot];
         }
         return null;
     }
 
-    private static void addData(int id, String name, int time){
-        Start.getDbHelper().addData(id, name, time);
+    private static void addData(int id, String name, int time, int link){
+        Start.getDbHelper().addData(id, name, time, link);
     }
 
     public static UserMode getUserMode() {
@@ -121,6 +119,7 @@ public class TimerManager {
         if (timers[id].isPlayingAlarm()){
             stopRingtone();
         }
+        LinkManager.getInstance().removeFromLink(timers[id]);
         timers[id].deactivateView();
         timers[id] = null;
         Start.getDbHelper().deleteData(id);
@@ -165,11 +164,11 @@ public class TimerManager {
         owner.setIndex(freeSlot.getIndex());
 
         dropped.getOwner().setView(freeSlot);
-        dropped.setOwner(null);
-        dropped.setActive(false);
-        dropped.requestDraw();
+        owner.setLinkId(owner.getLinkId());
 
-        Start.getDbHelper().addData(owner.getIndex(), owner.getName(), owner.getTimeSeconds());
+        dropped.setViewToEmpty();
+
+        Start.getDbHelper().addData(owner.getIndex(), owner.getName(), owner.getTimeSeconds(), owner.getLinkId());
     }
 
     public static void swappSlot(TimerView dropped, TimerView target){
@@ -191,8 +190,11 @@ public class TimerManager {
         droppedOwner.setView(target);
         targetOwner.setView(dropped);
 
-        Start.getDbHelper().addData(droppedOwner.getIndex(), droppedOwner.getName(), droppedOwner.getTimeSeconds());
-        Start.getDbHelper().addData(targetOwner.getIndex(), targetOwner.getName(), targetOwner.getTimeSeconds());
+        droppedOwner.setLinkId(droppedOwner.getLinkId());
+        targetOwner.setLinkId(targetOwner.getLinkId());
+
+        Start.getDbHelper().addData(droppedOwner.getIndex(), droppedOwner.getName(), droppedOwner.getTimeSeconds(), droppedOwner.getLinkId());
+        Start.getDbHelper().addData(targetOwner.getIndex(), targetOwner.getName(), targetOwner.getTimeSeconds(), targetOwner.getLinkId());
     }
 
 }

@@ -1,4 +1,4 @@
-package com.companyname.timerapp.util;
+package com.companyname.timerapp.linking;
 
 import com.companyname.timerapp.timerClasses.Timer;
 
@@ -72,6 +72,15 @@ public class LinkManager {
         }
     }
 
+    public void linkFromDb(int id, Timer timer){
+        if (id >= 0) {
+            while (links.size() <= id) {
+                links.add(new ArrayList<Timer>());
+            }
+            links.get(id).add(timer);
+        }
+    }
+
     public void removeFromLink(Timer timer){
         int linkId= timer.getLinkId();
         if (linkId >= links.size()){
@@ -82,12 +91,10 @@ public class LinkManager {
                 for (Timer tmpTimer : tempTimers) {
                     tmpTimer.setLinkId(-1);
                 }
-                System.out.println(links.size());
                 links.remove(linkId);
-                System.out.println(links.size());
             } else {
                 timer.setLinkId(-1);
-                tempTimers.remove(linkId);
+                tempTimers.remove(timer);
             }
         }
     }
@@ -99,7 +106,6 @@ public class LinkManager {
     }
 
     public void setStartTimer(Timer startTimer) {
-        System.out.println("timer: "+startTimer);
         this.startTimer = startTimer;
     }
 }

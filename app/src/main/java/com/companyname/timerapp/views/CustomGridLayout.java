@@ -4,17 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.view.MotionEvent;
 import android.widget.GridLayout;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
-import com.companyname.timerapp.util.LinkManager;
-import com.companyname.timerapp.util.UserMode;
+import com.companyname.timerapp.linking.LinkManager;
 
 public class CustomGridLayout extends GridLayout {
 
@@ -59,7 +55,7 @@ public class CustomGridLayout extends GridLayout {
         }
     }
 
-    @Override
+    /*@Override
     public boolean onInterceptTouchEvent(MotionEvent event){
         // return true to pass on to onTouchEvent
         // else handle in child
@@ -101,7 +97,7 @@ public class CustomGridLayout extends GridLayout {
         }else {
             return false;
         }
-    }
+    }*/
 
     private Timer calculateChild(float x, float y){
         float cellWidth = getChildAt(0).getWidth() + MainActivity.MARGIN*2;
@@ -110,5 +106,6 @@ public class CustomGridLayout extends GridLayout {
         int yIndex =(int) (y / cellHeight);
         return TimerManager.getTimer(yIndex * getColumnCount() + xIndex);
     }
+
 
 }

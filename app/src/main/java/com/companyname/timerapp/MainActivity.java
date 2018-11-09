@@ -27,9 +27,9 @@ import android.widget.TextView;
 
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
-import com.companyname.timerapp.util.LinkLine;
-import com.companyname.timerapp.util.LinkManager;
-import com.companyname.timerapp.util.UserMode;
+import com.companyname.timerapp.linking.LinkLine;
+import com.companyname.timerapp.linking.LinkManager;
+import com.companyname.timerapp.modesAndStates.UserMode;
 import com.companyname.timerapp.views.TimerView;
 
 public class MainActivity extends AppCompatActivity
@@ -236,6 +236,7 @@ public class MainActivity extends AppCompatActivity
             for(int xPos=0; xPos<numOfCol; xPos++){
                 final TimerView tView = new TimerView(this, xPos, yPos);
                 timerViews[yPos*numOfCol + xPos] = tView;
+
                 final int finalYPos = yPos;
                 final int finalXPos = xPos;
                 tView.setOnClickListener(new View.OnClickListener() {
@@ -253,9 +254,12 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        Timer timer;
         for (int i=0; i<TimerManager.getTimers().length; i++){
-            if (TimerManager.getTimer(i) != null){
-                TimerManager.getTimer(i).setView(timerViews[i]);
+            timer = TimerManager.getTimer(i);
+            if (timer != null){
+                timer.setView(timerViews[i]);
+                timer.updateLinkInView();
             }
         }
 
