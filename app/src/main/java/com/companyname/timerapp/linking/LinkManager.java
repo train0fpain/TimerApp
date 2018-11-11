@@ -85,7 +85,7 @@ public class LinkManager {
         int linkId= timer.getLinkId();
         if (linkId >= links.size()){
             timer.setLinkId(-1);
-        }else {
+        }else if (linkId >= 0){
             List<Timer> tempTimers = links.get(linkId);
             if (tempTimers.size() <= 2) {
                 for (Timer tmpTimer : tempTimers) {
@@ -101,7 +101,7 @@ public class LinkManager {
 
     public void startLinkedTimer(int id){
         for (Timer timer : links.get(id)) {
-            timer.setPause(false);
+            timer.togglePause();
         }
     }
 

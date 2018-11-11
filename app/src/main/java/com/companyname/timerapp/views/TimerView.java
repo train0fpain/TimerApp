@@ -71,15 +71,8 @@ public class TimerView extends View {
         init();
     }
 
-    public Vector2f getPos() {
-        return pos;
-    }
-
-    public void setPos(Vector2f pos) {
-        this.pos = pos;
-    }
-
-    private void init(){// prepare paint
+    private void init(){
+        // prepare paint
         linkIndicator = new LinkIndicator(textSizeTime*3/4);
 
         backGroundPaint = new Paint();
@@ -138,13 +131,6 @@ public class TimerView extends View {
 
     public void setOwner(Timer owner){
         this.owner = owner;
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec),
-                MeasureSpec.getSize(heightMeasureSpec));
-
     }
 
     @Override
