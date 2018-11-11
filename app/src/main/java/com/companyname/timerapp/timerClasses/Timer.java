@@ -15,8 +15,6 @@ public class Timer {
     private TimeFormat time;
     private TimerView view;
     private String name = "Timer name";
-    private boolean pause = true;
-    private boolean end = false;
     private int index;
     private int endClicks = 0;
     private int doubleTap = 0;
@@ -31,12 +29,12 @@ public class Timer {
     }
 
     public void update(){
-        if (!pause) {
+        if (timerState == TimerState.RUNNING || timerState == TimerState.FINISHED) {
             time.decrement();
             view.requestDraw();
 
-            if (!end && time.getCurrentSeconds() <= 0){
-                end = true;
+            if (timerState == TimerState.RUNNING && time.getCurrentSeconds() <= 0){
+                timerState = TimerState.FINISHED;
                 TimerManager.playRingtone();
             }
         }
@@ -121,7 +119,7 @@ public class Timer {
                 }
                 break;
             case 2:
-                if (end){
+                if (timerState == TimerState.FINISHED){
                     TimerManager.stopRingtone();
                 }
                 TimerManager.deleteTimer(index);
@@ -137,14 +135,15 @@ public class Timer {
                     if (endClicks >= 2) {
                         reset();
                     } else {
-                        setPause(true);
+                        timerState = TimerState.FINISHED_PAUSE;
+                        view.setColorForFinishedPause();
                         TimerManager.stopRingtone();
                     }
                 } else {
                     if (time.getCurrentSeconds() == time.getTotalSeconds() && linkId >= 0){
                         linkManager.startLinkedTimer(linkId);
                     }else {
-                        setPause(!pause);
+                        togglePause();
                     }
                 }
                 break;
@@ -173,12 +172,22 @@ public class Timer {
         }
     }
 
-    public void setPause(boolean pause){
-        this.pause = pause;
+    public void togglePause(){
+        switch (timerState){
+            case PAUSED:
+                timerState = TimerState.RUNNING;
+                break;
+            case RUNNING:
+                timerState = TimerState.PAUSED;
+                break;
+            case IDLE:
+                timerState = TimerState.RUNNING;
+                break;
+        }
     }
 
     public boolean isPlayingAlarm(){
-        return end && endClicks == 0;
+        return timerState == TimerState.FINISHED && endClicks == 0;
     }
 
     public void reset(){
@@ -187,15 +196,14 @@ public class Timer {
         }
         time.reset();
         view.reset();
-        pause = true;
-        end = false;
+        timerState = TimerState.IDLE;
         endClicks = 0;
-        view.requestDraw();
     }
 
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
         Start.getDbHelper().updateName(index, name);
@@ -204,12 +212,14 @@ public class Timer {
     public String getTimeString() {
         return time.toString();
     }
+
     public int getTimeSeconds(){
         return time.getTotalSeconds();
     }
+
     public void setTime(TimeFormat time) {
         this.time = time;
-        Start.getDbHelper().updateTime(index, (int)time.getTotalSeconds());
+        Start.getDbHelper().updateTime(index, time.getTotalSeconds());
     }
 
     public float getProgress(){
@@ -260,5 +270,9 @@ public class Timer {
             view.requestDraw();
             Start.getDbHelper().updateLink(index, linkId);
         }
+    }
+
+    public TimerState getTimerState() {
+        return timerState;
     }
 }

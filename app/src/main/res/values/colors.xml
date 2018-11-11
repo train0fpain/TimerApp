@@ -7,6 +7,7 @@
     <color name="colorCustomEdit">#079877</color>
     <color name="timerBackground">#e6e6e6</color>
     <color name="timerProgress">#87c854</color>
+    <color name="timerFinishedRunning">#f49842</color>
     <color name="timerFinished">#ff1806</color>
     <color name="timerWriting">#7f7679</color>
 </resources>
