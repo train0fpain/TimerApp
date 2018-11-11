@@ -30,8 +30,6 @@ public class LinkManager {
     }
 
     public void linkTimer(Timer endTimer){
-        System.out.println("start: "+startTimer);
-        System.out.println("end: "+endTimer);
         if (startTimer == endTimer || startTimer == null || endTimer == null){
         } else {
             if (endTimer.getLinkId() == -1) {
@@ -45,7 +43,6 @@ public class LinkManager {
             }
         }
         startTimer = null;
-        System.out.println(startTimer);
     }
 
     private void newLink(Timer timer1, Timer timer2){

@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
+import com.companyname.timerapp.modesAndStates.TimerState;
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
 import com.companyname.timerapp.linking.LinkManager;
@@ -29,6 +30,7 @@ public class TimerView extends View {
     private final int backgroundColor = getResources().getColor(R.color.timerBackground),
             progressColor = getResources().getColor(R.color.timerProgress),
             finishedColor = getResources().getColor(R.color.timerFinished),
+            finishedRunningColor = getResources().getColor(R.color.timerFinishedRunning),
             writingColor = getResources().getColor(R.color.timerWriting);
 
     private final Typeface font = Typeface.createFromAsset(Start.getContext().getAssets(), "fonts/Lato-Regular.ttf");
@@ -152,8 +154,8 @@ public class TimerView extends View {
             int nameLength = name.length();
             refreshBasicTextSize(width);
 
-            if (progress >= 1){
-                progressPaint.setColor(finishedColor);
+            if (progress >= 1 && owner.getTimerState() != TimerState.FINISHED_PAUSE){
+                progressPaint.setColor(finishedRunningColor);
             }
 
             if (progress < 0.35f){
@@ -176,6 +178,11 @@ public class TimerView extends View {
     }
 
     public void requestDraw(){
+        invalidate();
+    }
+
+    public void setColorForFinishedPause(){
+        progressPaint.setColor(finishedColor);
         invalidate();
     }
 
@@ -204,6 +211,7 @@ public class TimerView extends View {
 
     public void reset(){
         progressPaint.setColor(progressColor);
+        invalidate();
     }
 
     public void setActive(boolean active){
@@ -216,8 +224,6 @@ public class TimerView extends View {
                 }
             });
             this.setOnLongClickListener(null);
-
-
         }
     }
 
@@ -251,6 +257,6 @@ public class TimerView extends View {
         owner = null;
         isActive = false;
         linkIndicator.setLink(-1);
-        requestDraw();
+        invalidate();
     }
 }

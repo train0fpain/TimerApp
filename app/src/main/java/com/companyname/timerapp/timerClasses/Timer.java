@@ -136,6 +136,7 @@ public class Timer {
                         reset();
                     } else {
                         timerState = TimerState.FINISHED_PAUSE;
+                        view.setColorForFinishedPause();
                         TimerManager.stopRingtone();
                     }
                 } else {
@@ -197,12 +198,12 @@ public class Timer {
         view.reset();
         timerState = TimerState.IDLE;
         endClicks = 0;
-        view.requestDraw();
     }
 
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
         Start.getDbHelper().updateName(index, name);
@@ -211,12 +212,14 @@ public class Timer {
     public String getTimeString() {
         return time.toString();
     }
+
     public int getTimeSeconds(){
         return time.getTotalSeconds();
     }
+
     public void setTime(TimeFormat time) {
         this.time = time;
-        Start.getDbHelper().updateTime(index, (int)time.getTotalSeconds());
+        Start.getDbHelper().updateTime(index, time.getTotalSeconds());
     }
 
     public float getProgress(){
@@ -267,5 +270,9 @@ public class Timer {
             view.requestDraw();
             Start.getDbHelper().updateLink(index, linkId);
         }
+    }
+
+    public TimerState getTimerState() {
+        return timerState;
     }
 }
