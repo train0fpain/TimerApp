@@ -13,12 +13,13 @@ import android.view.View;
 
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
+import com.companyname.timerapp.linking.LinkLine;
+import com.companyname.timerapp.linking.LinkManager;
 import com.companyname.timerapp.modesAndStates.TimerState;
+import com.companyname.timerapp.modesAndStates.UserMode;
 import com.companyname.timerapp.timerClasses.Timer;
 import com.companyname.timerapp.timerClasses.TimerManager;
-import com.companyname.timerapp.linking.LinkManager;
 import com.companyname.timerapp.util.Start;
-import com.companyname.timerapp.modesAndStates.UserMode;
 import com.companyname.timerapp.util.Vector2f;
 
 public class TimerView extends View {
@@ -118,6 +119,16 @@ public class TimerView extends View {
                                 linkManager.linkTimer(owner);
                             }
                             linkManager.getLinkLine().stopDrawLine();
+                            TimerManager.setUserMode(UserMode.EDIT);
+                        }
+                        break;
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        if (TimerManager.getUserMode() == UserMode.LINK) {
+                            LinkLine linkLine = linkManager.getLinkLine();
+                            if (linkLine != null) {
+                                linkLine.stopDrawLine();
+                            }
+                            TimerManager.setUserMode(UserMode.EDIT);
                         }
                         break;
                 }
@@ -173,7 +184,6 @@ public class TimerView extends View {
 
         if (linkIndicator.shouldDraw()){
             canvas.drawCircle((width / 10), (height / 10) * 8, linkIndicator.getRadius(), linkIndicator.getPaint());
-            canvas.drawText(Integer.toString(linkIndicator.getLink()), (width / 10), (height / 10) * 8 + textBounds.height()/2, textPaintTime);
         }
     }
 
@@ -220,7 +230,11 @@ public class TimerView extends View {
             this.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TimerManager.addTimer(new Timer(null), true, getIndex());
+                    Timer tmp = new Timer(null);
+                    TimerManager.addTimer(tmp, true, getIndex());
+                    if (tmp != null) {
+                        ((MainActivity) v.getContext()).openEditPage(tmp);
+                    }
                 }
             });
             this.setOnLongClickListener(null);

@@ -4,16 +4,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class LinkIndicator {
-    private int[] colors = {Color.parseColor("#0000ff"),
-            Color.parseColor("#0000ff"),
-            Color.parseColor("#0000ff"),
-            Color.parseColor("#0000ff"),
-            Color.parseColor("#0000ff"),
-            Color.parseColor("#0000ff"),
-            Color.parseColor("#0000ff"),
-            Color.parseColor("#0000ff"),
-            Color.parseColor("#0000ff"),
-            Color.parseColor("#000055")};
+    private int[] colors = {Color.parseColor("#800000"),
+            Color.parseColor("#42d4f4"),
+            Color.parseColor("#4363d8"),
+            Color.parseColor("#911eb4"),
+            Color.parseColor("#f032e6"),
+            Color.parseColor("#e6beff"),
+            Color.parseColor("#808000"),
+            Color.parseColor("#9A6324"),
+            Color.parseColor("#469990"),
+            Color.parseColor("#000075")};
 
     private Paint paint = new Paint();
 

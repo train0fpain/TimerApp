@@ -69,4 +69,17 @@ public class Vector2f {
             return this;
         }
     }
+
+    public float dotP(Vector2f other){
+        return this.x * other.x + this.y * other.y;
+    }
+
+    public static float dotP(Vector2f vec1, Vector2f vec2){
+        return vec1.x * vec2.x + vec1.y * vec2.y;
+    }
+
+    @Override
+    public String toString(){
+        return "("+this.x+" ,"+this.y+")";
+    }
 }
