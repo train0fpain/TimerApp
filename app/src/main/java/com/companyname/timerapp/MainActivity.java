@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
@@ -25,11 +26,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.companyname.timerapp.timerClasses.Timer;
-import com.companyname.timerapp.timerClasses.TimerManager;
 import com.companyname.timerapp.linking.LinkLine;
 import com.companyname.timerapp.linking.LinkManager;
 import com.companyname.timerapp.modesAndStates.UserMode;
+import com.companyname.timerapp.timerClasses.Timer;
+import com.companyname.timerapp.timerClasses.TimerManager;
 import com.companyname.timerapp.views.TimerView;
 
 public class MainActivity extends AppCompatActivity
@@ -115,16 +116,23 @@ public class MainActivity extends AppCompatActivity
 //        drawer.addDrawerListener(toggle);
 //        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         gridLayout = findViewById(R.id.androidGrid);
         createGridLayout();
         mainLayout = findViewById(R.id.constraintLayout);
 
-//        TimerManager.setLinkLine((LinkLine) findViewById(R.id.linkLine));
         linkManager.setLinkLine((LinkLine) findViewById(R.id.linkLine));
 
+    }
+
+    @Override
+    protected void onStop() {
+        // call the superclass method first
+        super.onStop();
+
+        TimerManager.resetRingtone();
     }
 
     @Override
@@ -133,31 +141,20 @@ public class MainActivity extends AppCompatActivity
         // get switch for modes
         NavigationView navigationView = findViewById(R.id.nav_view);
         final SwitchCompat editModeSwitch = ((SwitchCompat)((LinearLayout)navigationView.getMenu().findItem(R.id.nav_switch).getActionView()).getChildAt(0));
-        final SwitchCompat linkModeSwitch = ((SwitchCompat)((LinearLayout)navigationView.getMenu().findItem(R.id.nav_link_switch).getActionView()).getChildAt(0));
 
         // create edit switch
         editModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                switchMode(b, UserMode.EDIT, View.VISIBLE, linkModeSwitch);
-            }
-        });
-
-        // create link switch
-        linkModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                switchMode(b, UserMode.LINK, View.INVISIBLE, editModeSwitch);
+                switchMode(b, UserMode.EDIT, View.VISIBLE);
             }
         });
 
         editModeSwitch.setChecked(TimerManager.getUserMode() == UserMode.EDIT);
-        linkModeSwitch.setChecked(TimerManager.getUserMode() == UserMode.LINK);
     }
 
-    private void switchMode(boolean switchState, UserMode mode, int iconVisible, SwitchCompat other){
+    private void switchMode(boolean switchState, UserMode mode, int iconVisible){
         if (switchState){
-            other.setChecked(false);
             TimerManager.setUserMode(mode);
             gridLayout.setBackgroundColor(getResources().getColor(R.color.colorCustomEdit));
             mainLayout.setBackgroundColor(getResources().getColor(R.color.colorCustomEdit));
@@ -172,7 +169,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -212,7 +209,7 @@ public class MainActivity extends AppCompatActivity
             TimerManager.resetRingtone();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -242,10 +239,10 @@ public class MainActivity extends AppCompatActivity
                 tView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Timer timer = TimerManager.addTimer(new Timer(null), true, finalYPos *numOfCol + finalXPos);
-                        if (timer != null) {
-                            openEditPage(timer);
-                        }
+                    Timer timer = TimerManager.addTimer(new Timer(null), true, finalYPos *numOfCol + finalXPos);
+                    if (timer != null) {
+                        openEditPage(timer);
+                    }
                     }
                 });
 
@@ -264,14 +261,14 @@ public class MainActivity extends AppCompatActivity
         }
 
         gridLayout.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener(){
+            new ViewTreeObserver.OnGlobalLayoutListener(){
 
-                    boolean updateLayout = true;
+                boolean updateLayout = true;
 
-                    @Override
-                    public void onGlobalLayout() {
+                @Override
+                public void onGlobalLayout() {
 
-                        if (updateLayout){
+                    if (updateLayout){
 
                         int pWidth = gridLayout.getWidth();
                         int pHeight = gridLayout.getHeight();
@@ -291,7 +288,8 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                         updateLayout = false;
-                    }}});
+                    }
+                }});
     }
 
     public static TimerView getViewAt(int index){
