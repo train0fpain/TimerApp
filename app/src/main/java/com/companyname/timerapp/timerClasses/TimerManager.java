@@ -6,8 +6,8 @@ import android.os.Handler;
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.R;
 import com.companyname.timerapp.linking.LinkManager;
-import com.companyname.timerapp.util.Start;
 import com.companyname.timerapp.modesAndStates.UserMode;
+import com.companyname.timerapp.util.Start;
 import com.companyname.timerapp.views.TimerView;
 
 public class TimerManager {
@@ -16,6 +16,7 @@ public class TimerManager {
     private static UserMode userMode = UserMode.NORMAL;
     private static MediaPlayer mP;
     private static int alarmCount = 0;
+    private static LinkManager linkManager = LinkManager.getInstance();
 
     public static void update(){
         if (timers !=null) {
@@ -95,7 +96,6 @@ public class TimerManager {
             newTimer.setIndex(slot);
             newTimer.setView(MainActivity.getViewAt(slot));
             if (addData) {
-                System.out.println("add data");
                 addData(slot, newTimer.getName(), newTimer.getTimeSeconds(), newTimer.getLinkId());
             }
             return timers[slot];
@@ -119,7 +119,7 @@ public class TimerManager {
         if (timers[id].isPlayingAlarm()){
             stopRingtone();
         }
-        LinkManager.getInstance().removeFromLink(timers[id]);
+        linkManager.removeFromLink(timers[id]);
         timers[id].deactivateView();
         timers[id] = null;
         Start.getDbHelper().deleteData(id);
@@ -128,6 +128,7 @@ public class TimerManager {
     public static void deleteAllTimers(){
         for (int i=0; i<timers.length; i++){
             if (timers[i] != null) {
+                linkManager.removeFromLink(timers[i]);
                 timers[i].deactivateView();
                 timers[i] = null;
             }

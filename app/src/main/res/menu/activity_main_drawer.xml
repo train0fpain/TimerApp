@@ -10,11 +10,11 @@
             android:icon="@android:drawable/ic_menu_edit"
             android:title="@string/edit_mode"
             app:actionLayout="@layout/action_view_switch" />
-        <item
+        <!--<item
             android:id="@+id/nav_link_switch"
             android:icon="@android:drawable/ic_menu_edit"
             android:title="@string/link_mode"
-            app:actionLayout="@layout/action_view_switch" />
+            app:actionLayout="@layout/action_view_switch" />-->
     </group>
 
     <item android:title="Irreversible functions">

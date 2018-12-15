@@ -33,7 +33,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean addData(int id, String name, int time, int link){
-        System.out.println("added "+name+" and "+time);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL0, id);
