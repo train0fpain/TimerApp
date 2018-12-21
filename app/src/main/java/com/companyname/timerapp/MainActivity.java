@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity
     TextView title;
     ImageView editIcon;
     AlertDialog dialog;
+    AlertDialog confirmDeleteDialog;
+    AlertDialog confirmResetDialog;
     EditText editText;
 
     public static final int MARGIN = 5;
@@ -55,35 +57,12 @@ public class MainActivity extends AppCompatActivity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences sharedPref = this.getPreferences(this.MODE_PRIVATE);
-        final SharedPreferences.Editor prefEditor = sharedPref.edit();
 
         editIcon = findViewById(R.id.icon_edit);
-        title = findViewById(R.id.title);
-        title.setText(sharedPref.getString("titleKey", "Der Goldene Koch 2019 Halbfinal"));
-        dialog = new AlertDialog.Builder(this).create();
-        editText = new EditText(this);
 
-        dialog.setTitle(R.string.editTitle);
-        dialog.setView(editText);
-        dialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.saveTitle), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                title.setText(editText.getText());
-                prefEditor.putString("titleKey", editText.getText().toString());
-                prefEditor.commit();
-            }
-        });
-
-        title.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (TimerManager.getUserMode() == UserMode.EDIT) {
-                    editText.setText(title.getText());
-                    dialog.show();
-                }
-            }
-        });
+        createDeleteDialog();
+        createResetDialog();
+        createTitleDialog();
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -202,7 +181,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_deleteAll) {
-            TimerManager.deleteAllTimers();
+            confirmDeleteDialog.show();
+//            TimerManager.deleteAllTimers();
         } else if (id == R.id.nav_resetAll) {
             TimerManager.resetAllTimers();
         } else if (id == R.id.nav_resetAlarm){
@@ -298,5 +278,77 @@ public class MainActivity extends AppCompatActivity
         }else{
             return null;
         }
+    }
+
+    private void createDeleteDialog(){
+        confirmDeleteDialog = new AlertDialog.Builder(this).create();
+
+        confirmDeleteDialog.setTitle(R.string.deleteAll);
+        confirmDeleteDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.deleteButton), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                TimerManager.deleteAllTimers();
+                System.out.println("delete all timers");
+            }
+        });
+
+        confirmDeleteDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+           @Override
+           public void onClick(DialogInterface dialog, int which) {
+               dialog.cancel();
+           }
+       });
+    }
+
+    private void createTitleDialog(){
+        SharedPreferences sharedPref = this.getPreferences(this.MODE_PRIVATE);
+        final SharedPreferences.Editor prefEditor = sharedPref.edit();
+
+        title = findViewById(R.id.title);
+        title.setText(sharedPref.getString("titleKey", "Der Goldene Koch 2019 Halbfinal"));
+        dialog = new AlertDialog.Builder(this).create();
+        editText = new EditText(this);
+
+        dialog.setTitle(R.string.editTitle);
+        dialog.setView(editText);
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.saveTitle), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                title.setText(editText.getText());
+                prefEditor.putString("titleKey", editText.getText().toString());
+                prefEditor.commit();
+            }
+        });
+
+        title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TimerManager.getUserMode() == UserMode.EDIT) {
+                    editText.setText(title.getText());
+                    dialog.show();
+                }
+            }
+        });
+    }
+
+    private void createResetDialog(){
+
+        confirmResetDialog = new AlertDialog.Builder(this).create();
+
+        confirmResetDialog.setTitle(R.string.deleteAll);
+        confirmResetDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.deleteButton), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                TimerManager.resetAllTimers();
+                System.out.println("delete all timers");
+            }
+        });
+
+        confirmResetDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
     }
 }
