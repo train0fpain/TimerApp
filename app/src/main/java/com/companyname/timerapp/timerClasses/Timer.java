@@ -177,7 +177,6 @@ public class Timer {
                 break;
             case 2:
                 linkManager.removeFromLink(this);
-                reset();
                 break;
         }
     }
@@ -187,6 +186,17 @@ public class Timer {
             this.view = view;
             addView();
             view.setActive(true);
+            switch (timerState){
+                case FINISHED:
+                    view.setColorForFinishedRunning();
+                    break;
+                case FINISHED_PAUSE:
+                    view.setColorForFinishedPause();
+                    break;
+                default:
+                    view.reset();
+                    break;
+            }
         }
     }
 

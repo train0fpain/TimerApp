@@ -196,6 +196,11 @@ public class TimerView extends View {
         invalidate();
     }
 
+    public void setColorForFinishedRunning(){
+        progressPaint.setColor(finishedRunningColor);
+        invalidate();
+    }
+
     private void adjustText(Rect textBounds, int width, String name, Canvas canvas, int height){
         // break text if exeeds certain length
         final int charsPerLine = 19;
