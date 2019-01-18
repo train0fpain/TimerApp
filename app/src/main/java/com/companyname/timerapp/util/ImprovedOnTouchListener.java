@@ -7,7 +7,7 @@ import android.view.View.OnTouchListener;
 public class ImprovedOnTouchListener implements OnTouchListener {
 
     private final double LONG_CLICK_TIME = 300d; // miliseconds
-    private final float MOVE_TOLERANCE = 15f; // pixel
+    private final float MOVE_TOLERANCE = 30f; // pixel
 
     private Vector2f downPos = new Vector2f();
     private Vector2f nowPos = new Vector2f();

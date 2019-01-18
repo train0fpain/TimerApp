@@ -200,6 +200,10 @@ public class Timer {
         }
     }
 
+    public TimerView getView() {
+        return view;
+    }
+
     public void togglePause(){
         switch (timerState){
             case PAUSED:

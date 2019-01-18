@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.companyname.timerapp.timerClasses.Timer;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
@@ -32,6 +34,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public boolean addData(Timer timer){
+        return addData(timer.getLinkId(), timer.getName(), timer.getTimeSeconds(), timer.getLinkId());
+    }
+
     public boolean addData(int id, String name, int time, int link){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -55,6 +61,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_NAME;
         Cursor data = db.rawQuery(query, null);
         return data;
+    }
+
+    public void updateTimer(Timer timer){
+        SQLiteDatabase db = this.getWritableDatabase();
+
     }
 
     public void updateName(int id, String name){

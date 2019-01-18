@@ -17,6 +17,7 @@ public class LinkManager {
 
 
     private LinkLine linkLine;
+    @SuppressWarnings("unchecked")
     private List<Timer>[] links = new List[10];
 
     private Timer startTimer;

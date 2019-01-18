@@ -10,6 +10,8 @@ import com.companyname.timerapp.modesAndStates.UserMode;
 import com.companyname.timerapp.util.Start;
 import com.companyname.timerapp.views.TimerView;
 
+import java.util.Arrays;
+
 public class TimerManager {
 
     private static Timer[] timers = new Timer[20];
@@ -197,5 +199,6 @@ public class TimerManager {
         Start.getDbHelper().addData(droppedOwner.getIndex(), droppedOwner.getName(), droppedOwner.getTimeSeconds(), droppedOwner.getLinkId());
         Start.getDbHelper().addData(targetOwner.getIndex(), targetOwner.getName(), targetOwner.getTimeSeconds(), targetOwner.getLinkId());
     }
+
 
 }
