@@ -1,6 +1,5 @@
 package com.companyname.timerapp.timerClasses;
 
-import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.os.Handler;
 import android.view.View;
@@ -9,9 +8,6 @@ import android.widget.Toast;
 import com.companyname.timerapp.MainActivity;
 import com.companyname.timerapp.linking.LinkManager;
 import com.companyname.timerapp.modesAndStates.TimerState;
-import com.companyname.timerapp.modesAndStates.UserMode;
-import com.companyname.timerapp.util.ImprovedOnTouchInterface;
-import com.companyname.timerapp.util.ImprovedOnTouchListener;
 import com.companyname.timerapp.util.Start;
 import com.companyname.timerapp.views.TimerView;
 
@@ -45,14 +41,12 @@ public class Timer {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void addView(){
         view.setOwner(this);
 
-        view.setOnTouchListener(new ImprovedOnTouchListener(new ImprovedOnTouchInterface() {
-
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick() {
+            public void onClick(View v) {
                 doubleTap++;
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -72,47 +66,11 @@ public class Timer {
                     }
                 }, 300);
             }
+        });
 
+        view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onLongClick() {
-                switch (TimerManager.getUserMode()){
-                    case EDIT:
-                        break;
-                    case NORMAL:
-                        try {
-                            ((MainActivity) view.getContext()).openEditPage(Timer.this);
-                        } catch (NullPointerException e) {
-                            Toast.makeText(Start.getContext(), "#Activity-error: Can't open edit page", Toast.LENGTH_LONG).show();
-                        }
-                        break;
-                    case LINK:
-                        break;
-                }
-            }
-
-            @Override
-            public void onDrag() {
-                switch (TimerManager.getUserMode()){
-                    case EDIT:
-                        TimerManager.setUserMode(UserMode.LINK);
-                        if (view.getOwner() != null) {
-                            ClipData clipData2 = ClipData.newPlainText("id", Integer.toString(index));
-                            View.DragShadowBuilder dragShadowBuilder2 = new View.DragShadowBuilder(null);
-                            if (android.os.Build.VERSION.SDK_INT > 23) {
-                                view.startDragAndDrop(clipData2, dragShadowBuilder2, null, 0);
-                            } else {
-                                view.startDrag(clipData2, dragShadowBuilder2, null, 0);
-                            }
-                            linkManager.setStartTimer(view.getOwner());
-                        }
-                        break;
-                    case NORMAL:
-                        break;
-                }
-            }
-
-            @Override
-            public void onLongDrag() {
+            public boolean onLongClick(View v) {
                 switch (TimerManager.getUserMode()){
                     case EDIT:
                         ClipData clipData = ClipData.newPlainText("","");
@@ -124,17 +82,18 @@ public class Timer {
                         }
                         break;
                     case NORMAL:
+                        try {
+                            ((MainActivity) view.getContext()).openEditPage(Timer.this);
+                        } catch (NullPointerException e) {
+                            Toast.makeText(Start.getContext(), "#Activity-error: Can't open edit page", Toast.LENGTH_LONG).show();
+                        }
+                        break;
+                    case LINK:
                         break;
                 }
-            }
-        }));
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                return false;
             }
         });
-
 
         view.requestDraw();
     }
@@ -176,7 +135,7 @@ public class Timer {
                 }
                 break;
             case 2:
-                linkManager.removeFromLink(this);
+                //linkManager.removeFromLink(this);
                 break;
         }
     }
@@ -267,9 +226,7 @@ public class Timer {
     }
 
     public void deactivateView(){
-        view.setActive(false);
-        view.setOwner(null);
-        view.requestDraw();
+        view.setViewToEmpty();
     }
 
     public int getHour(){
