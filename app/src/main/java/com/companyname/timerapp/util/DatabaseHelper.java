@@ -35,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean addData(Timer timer){
-        return addData(timer.getLinkId(), timer.getName(), timer.getTimeSeconds(), timer.getLinkId());
+        return addData(timer.getIndex(), timer.getName(), timer.getTimeSeconds(), timer.getLinkId());
     }
 
     public boolean addData(int id, String name, int time, int link){

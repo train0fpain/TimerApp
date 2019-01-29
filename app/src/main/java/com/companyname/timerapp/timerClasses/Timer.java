@@ -267,9 +267,7 @@ public class Timer {
     }
 
     public void deactivateView(){
-        view.setActive(false);
-        view.setOwner(null);
-        view.requestDraw();
+        view.setViewToEmpty();
     }
 
     public int getHour(){

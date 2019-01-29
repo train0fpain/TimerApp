@@ -175,29 +175,72 @@ public class TimerManager {
     }
 
     public static void swappSlot(TimerView dropped, TimerView target){
-        Timer droppedOwner = dropped.getOwner();
-        Timer targetOwner = target.getOwner();
+        newSwapSlot(dropped, target);
+    }
 
-        int droppedIndex = droppedOwner.getIndex();
-        int targetIndex = targetOwner.getIndex();
+    public static void newSwapSlot(TimerView dropped, TimerView target){
+        Timer[] newTimers = new Timer[timers.length];
+        System.arraycopy(timers, 0, newTimers, 0, timers.length);
+        int targetIndex = target.getIndex();
+        int originIndex = dropped.getIndex();
+        timers[originIndex] = null;
+        Start.getDbHelper().deleteData(originIndex);
 
-        Start.getDbHelper().deleteData(droppedIndex);
-        Start.getDbHelper().deleteData(targetIndex);
+        if (targetIndex > originIndex){
+            int nullIndex = getNullIndex(timers, targetIndex, originIndex);
+            System.arraycopy(timers, originIndex + 1, newTimers, originIndex, targetIndex - originIndex);
+            System.arraycopy(timers, targetIndex, newTimers, targetIndex, timers.length - 1 - targetIndex);
+            newTimers[targetIndex] = dropped.getOwner();
+            dropped.getOwner().deactivateView();
 
-        timers[droppedIndex] = targetOwner;
-        timers[targetIndex] = droppedOwner;
+            for (int i = Math.max(originIndex, nullIndex); i <= targetIndex; i++) {
+                swapSlotLoop(i, newTimers);
+            }
 
-        droppedOwner.setIndex(targetIndex);
-        targetOwner.setIndex(droppedIndex);
+        }else{
+            int nullIndex = originIndex;
+            for (int i = targetIndex; i < originIndex; i++) {
+                Start.getDbHelper().deleteData(i);
 
-        droppedOwner.setView(target);
-        targetOwner.setView(dropped);
+                if (timers[i] == null){
+                    nullIndex = i;
+                    break;
+                }
+            }
+            System.arraycopy(timers, 0, newTimers, 0, targetIndex);
+            System.arraycopy(timers, targetIndex, newTimers, targetIndex + 1, originIndex - targetIndex);
+            newTimers[targetIndex] = dropped.getOwner();
+            dropped.getOwner().deactivateView();
 
-        droppedOwner.setLinkId(droppedOwner.getLinkId());
-        targetOwner.setLinkId(targetOwner.getLinkId());
+            for (int i = targetIndex; i <= Math.min(originIndex, nullIndex); i++) {
+                swapSlotLoop(i, newTimers);
+            }
+        }
+    }
 
-        Start.getDbHelper().addData(droppedOwner.getIndex(), droppedOwner.getName(), droppedOwner.getTimeSeconds(), droppedOwner.getLinkId());
-        Start.getDbHelper().addData(targetOwner.getIndex(), targetOwner.getName(), targetOwner.getTimeSeconds(), targetOwner.getLinkId());
+    private static int getNullIndex(Timer[] array, int from, int to){
+        for (int i = from; i > to; i--) {
+            Start.getDbHelper().deleteData(i);
+
+            if (timers[i] == null){
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private static void swapSlotLoop(int i, Timer[] newTimers){
+        Timer localTimer = newTimers[i];
+        if (localTimer != null) {
+            localTimer.setIndex(i);
+            localTimer.setView(MainActivity.getViewAt(i));
+            localTimer.setLinkId(localTimer.getLinkId());
+
+            timers[i] = localTimer;
+
+            Start.getDbHelper().addData(localTimer);
+        }
+
     }
 
 
