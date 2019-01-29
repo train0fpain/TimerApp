@@ -193,6 +193,8 @@ public class TimerView extends View {
 
     public void setColorForFinishedPause(){
         progressPaint.setColor(finishedColor);
+        textPaintTime.setColor(backgroundColor);
+        textPaintName.setColor(backgroundColor);
         invalidate();
     }
 
@@ -226,6 +228,8 @@ public class TimerView extends View {
 
     public void reset(){
         progressPaint.setColor(progressColor);
+        textPaintTime.setColor(writingColor);
+        textPaintName.setColor(writingColor);
         invalidate();
     }
 
