@@ -26,11 +26,13 @@
             android:label="@string/edit"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="sensorLandscape"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <activity android:name=".LinksActivity"></activity>
     </application>
 
 </manifest>

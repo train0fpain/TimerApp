@@ -17,4 +17,5 @@
     <string name="editTitle">Edit the title</string>
     <string name="saveTitle">SAVE TITLE</string>
     <string name="deleteAll">Delete all timers?</string>
+    <string name="keepScreenOn">Disable display timeout</string>
 </resources>

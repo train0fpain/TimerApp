@@ -12,4 +12,6 @@
     <string name="editTitle">Titel Bearbeiten</string>
     <string name="saveTitle">TITEL SPEICHERN</string>
     <string name="link_mode">Verbindungs Modus</string>
+    <string name="deleteAll">Alle timer löschen?</string>
+    <string name="keepScreenOn">Display immer ON</string>
 </resources>

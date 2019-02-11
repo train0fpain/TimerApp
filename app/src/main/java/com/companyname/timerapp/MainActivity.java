@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity
 
     public static final int MARGIN = 5;
 
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor prefEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +61,8 @@ public class MainActivity extends AppCompatActivity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+        sharedPref = this.getPreferences(this.MODE_PRIVATE);
+        prefEditor = sharedPref.edit();
 
         editIcon = findViewById(R.id.icon_edit);
 
@@ -120,6 +126,7 @@ public class MainActivity extends AppCompatActivity
         // get switch for modes
         NavigationView navigationView = findViewById(R.id.nav_view);
         final SwitchCompat editModeSwitch = ((SwitchCompat)((LinearLayout)navigationView.getMenu().findItem(R.id.nav_switch).getActionView()).getChildAt(0));
+        final SwitchCompat screenSwitch = ((SwitchCompat)((LinearLayout)navigationView.getMenu().findItem(R.id.screen_switch).getActionView()).getChildAt(0));
 
         // create edit switch
         editModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -130,6 +137,19 @@ public class MainActivity extends AppCompatActivity
         });
 
         editModeSwitch.setChecked(TimerManager.getUserMode() == UserMode.EDIT);
+
+        // create screen switch
+        screenSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                setDisplayTimeout(b);
+            }
+        });
+
+        boolean screenTimeout = sharedPref.getBoolean("screenTimeout", false);
+        screenSwitch.setChecked(screenTimeout);
+        setDisplayTimeout(screenTimeout);
+
     }
 
     private void switchMode(boolean switchState, UserMode mode, int iconVisible){
@@ -143,6 +163,16 @@ public class MainActivity extends AppCompatActivity
             gridLayout.setBackgroundColor(getResources().getColor(R.color.colorCustom));
             mainLayout.setBackgroundColor(getResources().getColor(R.color.colorCustom));
             editIcon.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void setDisplayTimeout(boolean b){
+        if (b){
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            prefEditor.putBoolean("screenTimeout", true);
+        }else{
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            prefEditor.putBoolean("screenTimeout", false);
         }
     }
 
@@ -187,6 +217,9 @@ public class MainActivity extends AppCompatActivity
             TimerManager.resetAllTimers();
         } else if (id == R.id.nav_resetAlarm){
             TimerManager.resetRingtone();
+        } else if(id == R.id.update){
+            String url = "https://drive.google.com/open?id=1VCihzSg37x_H8VMJmI7X-O481Hfx2yui";
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -301,9 +334,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createTitleDialog(){
-        SharedPreferences sharedPref = this.getPreferences(this.MODE_PRIVATE);
-        final SharedPreferences.Editor prefEditor = sharedPref.edit();
-
         title = findViewById(R.id.title);
         title.setText(sharedPref.getString("titleKey", "Der Goldene Koch 2019 Halbfinal"));
         dialog = new AlertDialog.Builder(this).create();
