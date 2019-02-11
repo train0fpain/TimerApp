@@ -15,10 +15,7 @@
             android:icon="@android:drawable/ic_lock_power_off"
             android:title="@string/keepScreenOn"
             app:actionLayout="@layout/action_view_switch" />
-        <item
-            android:id="@+id/update"
-            android:icon="@android:drawable/ic_menu_upload"
-            android:title="Update" />
+
         <!--<item
             android:id="@+id/nav_link_switch"
             android:icon="@android:drawable/ic_menu_edit"
@@ -40,6 +37,15 @@
                 android:id="@+id/nav_deleteAll"
                 android:icon="@android:drawable/ic_menu_delete"
                 android:title="@string/deleteTimers" />
+        </menu>
+    </item>
+
+    <item android:title="Others">
+        <menu>
+            <item
+                android:id="@+id/update"
+                android:icon="@android:drawable/ic_menu_upload"
+                android:title="Update" />
         </menu>
     </item>
 
